@@ -45,6 +45,15 @@ export function LoginForm() {
       ) : null}
 
       <SubmitButton />
+
+      <p className="text-center text-sm text-gray-500">
+        <a
+          href="/forgot-password"
+          className="font-semibold text-brand hover:underline"
+        >
+          Forgot password?
+        </a>
+      </p>
     </form>
   );
 }

@@ -1,9 +1,9 @@
 import { redirect } from "next/navigation";
 import { getCurrentUser, roleHome } from "@/lib/auth";
-import { LoginForm } from "./login-form";
+import { SignupForm } from "./signup-form";
 import { Logo } from "@/components/logo";
 
-export default async function LoginPage() {
+export default async function SignupPage() {
   const user = await getCurrentUser();
   if (user) redirect(roleHome(user.role));
 
@@ -16,18 +16,18 @@ export default async function LoginPage() {
             Lovejoy XC Log
           </h1>
           <p className="mt-1 text-sm text-gray-500">
-            Private team running log · Lovejoy Leopards
+            Create your athlete account
           </p>
         </div>
 
         <div className="rounded-2xl border border-line bg-white p-6 shadow-sm">
-          <LoginForm />
+          <SignupForm />
         </div>
 
         <p className="mt-4 text-center text-sm text-gray-500">
-          New athlete?{" "}
-          <a href="/signup" className="font-semibold text-brand hover:underline">
-            Sign up with your team code
+          Already have an account?{" "}
+          <a href="/login" className="font-semibold text-brand hover:underline">
+            Sign in
           </a>
         </p>
       </div>
