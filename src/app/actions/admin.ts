@@ -185,6 +185,7 @@ export async function createTeam(
     await prisma.team.update({
       where: { id: team.id },
       data: {
+        signupCode: code,
         signupCodeHash: await hashInviteCode(code),
         signupEnabled: true,
         signupCodeRotatedAt: new Date(),
@@ -201,7 +202,7 @@ export async function toggleTeamSignup(teamId: string): Promise<AdminState> {
   await requireRole("ADMIN");
   const team = await prisma.team.findUnique({ where: { id: teamId } });
   if (!team) return { error: "Team not found." };
-  if (!team.signupEnabled && !team.signupCodeHash) {
+  if (!team.signupEnabled && !team.signupCodeHash && !team.signupCode) {
     return { error: "Generate an invite code before enabling signup." };
   }
   await prisma.team.update({
@@ -218,6 +219,7 @@ export async function generateTeamSignupCode(teamId: string): Promise<AdminState
   await prisma.team.update({
     where: { id: teamId },
     data: {
+      signupCode: code,
       signupCodeHash: await hashInviteCode(code),
       signupCodeRotatedAt: new Date(),
     },

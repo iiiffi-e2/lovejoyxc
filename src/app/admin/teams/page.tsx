@@ -54,7 +54,8 @@ export default async function AdminTeamsPage() {
                 <TeamSignupControls
                   id={t.id}
                   signupEnabled={t.signupEnabled}
-                  hasCode={!!t.signupCodeHash}
+                  hasCode={!!(t.signupCode ?? t.signupCodeHash)}
+                  signupCode={t.signupCode}
                   signupCodeRotatedAt={t.signupCodeRotatedAt}
                 />
               </Card>
