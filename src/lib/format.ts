@@ -126,3 +126,15 @@ export function dateInputToUTC(value: string): Date {
 export function toDateInputValue(date: Date): string {
   return date.toISOString().slice(0, 10);
 }
+
+/** Format stored startTime ("06:30" or "15:30") for display. */
+export function formatScheduleTime(startTime?: string | null): string {
+  if (!startTime?.trim()) return "";
+  const match = startTime.trim().match(/^(\d{1,2}):(\d{2})$/);
+  if (!match) return startTime.trim();
+  const hour = Number(match[1]);
+  const minute = match[2];
+  const period = hour >= 12 ? "PM" : "AM";
+  const hour12 = hour % 12 || 12;
+  return `${hour12}:${minute} ${period}`;
+}

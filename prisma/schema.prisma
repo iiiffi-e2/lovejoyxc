@@ -64,6 +64,11 @@ enum Surface {
   OTHER
 }
 
+enum ScheduleEventType {
+  PRACTICE
+  MEET
+}
+
 model User {
   id           String      @id @default(cuid())
   name         String
@@ -89,6 +94,7 @@ model User {
   authoredNotes  CoachNote[]  @relation("CoachNoteAuthor")
   // Coach notes about this user (when acting as an athlete)
   receivedNotes  CoachNote[]  @relation("CoachNoteAthlete")
+  createdScheduleEvents ScheduleEvent[]
 
   @@index([role])
   @@index([teamId])
@@ -107,8 +113,9 @@ model Team {
   createdAt           DateTime  @default(now())
   updatedAt           DateTime  @updatedAt
 
-  members     User[]
-  workoutLogs WorkoutLog[]
+  members        User[]
+  workoutLogs    WorkoutLog[]
+  scheduleEvents ScheduleEvent[]
 
   @@unique([name, schoolYear])
   @@index([schoolYear])
@@ -176,6 +183,26 @@ model CoachNote {
   athlete   User   @relation("CoachNoteAthlete", fields: [athleteId], references: [id], onDelete: Cascade)
 
   @@index([athleteId, createdAt])
+}
+
+model ScheduleEvent {
+  id          String            @id @default(cuid())
+  type        ScheduleEventType
+  title       String
+  date        DateTime          @db.Date
+  startTime   String?
+  location    String?
+  notes       String?
+  createdAt   DateTime          @default(now())
+  updatedAt   DateTime          @updatedAt
+
+  teamId      String
+  team        Team              @relation(fields: [teamId], references: [id], onDelete: Cascade)
+
+  createdById String
+  createdBy   User              @relation(fields: [createdById], references: [id], onDelete: Cascade)
+
+  @@index([teamId, date])
 }
 
 model Session {

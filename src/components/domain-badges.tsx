@@ -1,8 +1,9 @@
-import type { Feeling, Soreness, WorkoutType } from "@prisma/client";
+import type { Feeling, ScheduleEventType, Soreness, WorkoutType } from "@prisma/client";
 import { Badge } from "./ui/badge";
 import {
   FEELING_EMOJI,
   FEELING_LABEL,
+  SCHEDULE_EVENT_TYPE_LABEL,
   SORENESS_LABEL,
   WORKOUT_TYPE_LABEL,
 } from "@/lib/labels";
@@ -44,4 +45,18 @@ export function SorenessBadge({ soreness }: { soreness: Soreness }) {
   const tone =
     soreness === "HIGH" ? "injury" : soreness === "MODERATE" ? "warning" : "neutral";
   return <Badge tone={tone}>{SORENESS_LABEL[soreness]}</Badge>;
+}
+
+const SCHEDULE_TONE: Record<
+  ScheduleEventType,
+  Parameters<typeof Badge>[0]["tone"]
+> = {
+  PRACTICE: "neutral",
+  MEET: "brand",
+};
+
+export function ScheduleEventTypeBadge({ type }: { type: ScheduleEventType }) {
+  return (
+    <Badge tone={SCHEDULE_TONE[type]}>{SCHEDULE_EVENT_TYPE_LABEL[type]}</Badge>
+  );
 }

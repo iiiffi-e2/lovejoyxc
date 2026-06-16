@@ -1,5 +1,6 @@
 export type NavIconKey =
   | "dashboard"
+  | "schedule"
   | "log"
   | "history"
   | "shoes"
@@ -20,6 +21,7 @@ export type NavItem = {
 
 export const athleteNav: NavItem[] = [
   { href: "/dashboard", label: "Dashboard", icon: "dashboard" },
+  { href: "/schedule", label: "Schedule", icon: "schedule" },
   { href: "/log", label: "Log Run", icon: "log" },
   { href: "/history", label: "History", icon: "history" },
   { href: "/shoes", label: "Shoes", icon: "shoes" },
@@ -28,6 +30,7 @@ export const athleteNav: NavItem[] = [
 
 export const coachNav: NavItem[] = [
   { href: "/coach", label: "Dashboard", icon: "dashboard" },
+  { href: "/coach/schedule", label: "Schedule", icon: "schedule" },
   { href: "/coach/athletes", label: "Athletes", icon: "athletes" },
   { href: "/coach/logs", label: "Logs", icon: "logs" },
   { href: "/coach/reports", label: "Reports", icon: "reports" },
@@ -37,6 +40,7 @@ export const coachNav: NavItem[] = [
 
 export const adminNav: NavItem[] = [
   { href: "/admin", label: "Overview", icon: "dashboard" },
+  { href: "/admin/schedule", label: "Schedule", icon: "schedule" },
   { href: "/admin/users", label: "People", icon: "people" },
   { href: "/admin/teams", label: "Teams", icon: "teams" },
   { href: "/admin/reports", label: "Reports", icon: "reports" },

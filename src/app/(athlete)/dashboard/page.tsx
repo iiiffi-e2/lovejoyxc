@@ -9,7 +9,8 @@ import {
   ClipboardList,
 } from "lucide-react";
 import { requireRole } from "@/lib/auth";
-import { getAthleteDashboard } from "@/lib/queries";
+import { getAthleteDashboard, getThisWeekSchedule } from "@/lib/queries";
+import { ScheduleEventCard } from "@/components/schedule/schedule-event-card";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { StatCard } from "@/components/stat-card";
@@ -27,6 +28,9 @@ import { RUNNING_TYPES } from "@/lib/labels";
 export default async function AthleteDashboard() {
   const user = await requireRole("ATHLETE");
   const data = await getAthleteDashboard(user.id);
+  const weekEvents = user.teamId
+    ? await getThisWeekSchedule(user.teamId)
+    : [];
   const change = changePercent(data.thisWeekMiles, data.lastWeekMiles);
 
   return (
@@ -80,6 +84,33 @@ export default async function AthleteDashboard() {
           icon={Flame}
           hint={data.streak > 0 ? "Stay consistent" : "Log today to start"}
         />
+      </div>
+
+      <div>
+        <SectionTitle
+          title="This week"
+          action={{ label: "Full schedule", href: "/schedule" }}
+        />
+        {weekEvents.length > 0 ? (
+          <ul className="space-y-3">
+            {weekEvents.map((event) => (
+              <li key={event.id}>
+                <ScheduleEventCard event={event} />
+              </li>
+            ))}
+          </ul>
+        ) : (
+          <EmptyState
+            icon={CalendarDays}
+            title="No events this week"
+            description="Check the full schedule for upcoming practices and meets."
+            action={
+              <Button asChild variant="outline" size="sm">
+                <Link href="/schedule">View schedule</Link>
+              </Button>
+            }
+          />
+        )}
       </div>
 
       {data.shoeAlerts.length > 0 ? (

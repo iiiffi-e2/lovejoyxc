@@ -21,6 +21,13 @@ function utcDay(offsetDays: number): Date {
   return new Date(base - offsetDays * DAY);
 }
 
+function utcDateOffset(days: number): Date {
+  const d = new Date();
+  d.setUTCHours(0, 0, 0, 0);
+  d.setUTCDate(d.getUTCDate() + days);
+  return d;
+}
+
 function pick<T>(arr: T[]): T {
   return arr[Math.floor(Math.random() * arr.length)];
 }
@@ -168,6 +175,7 @@ async function main() {
   await prisma.coachNote.deleteMany();
   await prisma.workoutLog.deleteMany();
   await prisma.shoe.deleteMany();
+  await prisma.scheduleEvent.deleteMany();
   await prisma.user.deleteMany();
   await prisma.team.deleteMany();
 
@@ -199,6 +207,40 @@ async function main() {
       role: "COACH",
       teamId: team.id,
     },
+  });
+
+  await prisma.scheduleEvent.createMany({
+    data: [
+      {
+        type: "PRACTICE",
+        title: "Morning practice",
+        date: utcDateOffset(1),
+        startTime: "06:30",
+        location: "Lovejoy HS track",
+        notes: "Easy 4–5 miles",
+        teamId: team.id,
+        createdById: coach.id,
+      },
+      {
+        type: "MEET",
+        title: "Lucas Lovejoy Invitational",
+        date: utcDateOffset(5),
+        startTime: "08:00",
+        location: "Lucas Lovejoy HS",
+        notes: "Bus leaves at 6:15 AM",
+        teamId: team.id,
+        createdById: coach.id,
+      },
+      {
+        type: "PRACTICE",
+        title: "Recovery run",
+        date: utcDateOffset(-3),
+        startTime: "16:00",
+        location: "Neighborhood loop",
+        teamId: team.id,
+        createdById: coach.id,
+      },
+    ],
   });
 
   console.log("Creating athletes, shoes, and logs…");

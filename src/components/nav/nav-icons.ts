@@ -4,6 +4,7 @@ import {
   Bell,
   BarChart3,
   Building2,
+  CalendarDays,
   CalendarPlus,
   ClipboardList,
   Footprints,
@@ -18,6 +19,7 @@ import type { NavIconKey } from "./nav-config";
 
 export const NAV_ICONS: Record<NavIconKey, LucideIcon> = {
   dashboard: LayoutDashboard,
+  schedule: CalendarDays,
   log: CalendarPlus,
   history: History,
   shoes: Footprints,

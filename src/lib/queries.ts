@@ -493,3 +493,50 @@ export async function getAthleteProfileForCoach(athleteId: string) {
     lastWeekMiles: milesInRange(logs, lastWeek.start, lastWeek.end),
   };
 }
+
+export type ScheduleEventRow = {
+  id: string;
+  type: import("@prisma/client").ScheduleEventType;
+  title: string;
+  date: Date;
+  startTime: string | null;
+  location: string | null;
+  notes: string | null;
+};
+
+export async function getScheduleEventsForTeam(
+  teamId: string,
+  options?: { from?: Date; to?: Date },
+): Promise<ScheduleEventRow[]> {
+  const where: Prisma.ScheduleEventWhereInput = { teamId };
+  if (options?.from || options?.to) {
+    where.date = {};
+    if (options.from) where.date.gte = startOfUTCDay(options.from);
+    if (options.to) where.date.lt = options.to;
+  }
+
+  return prisma.scheduleEvent.findMany({
+    where,
+    orderBy: [{ date: "asc" }, { startTime: "asc" }],
+    select: {
+      id: true,
+      type: true,
+      title: true,
+      date: true,
+      startTime: true,
+      location: true,
+      notes: true,
+    },
+  });
+}
+
+export async function getThisWeekSchedule(teamId: string): Promise<ScheduleEventRow[]> {
+  const { start, end } = weekRange(0);
+  return getScheduleEventsForTeam(teamId, { from: start, to: end });
+}
+
+export async function getScheduleEvent(id: string, teamId: string) {
+  return prisma.scheduleEvent.findFirst({
+    where: { id, teamId },
+  });
+}
