@@ -2,6 +2,7 @@ import { requireRole } from "@/lib/auth";
 import { TopBar } from "@/components/nav/top-bar";
 import { Sidebar } from "@/components/nav/sidebar";
 import { BottomNav } from "@/components/nav/bottom-nav";
+import { RoleViewSwitcher } from "@/components/nav/role-view-switcher";
 import { adminNav } from "@/components/nav/nav-config";
 
 export default async function AdminLayout({
@@ -13,15 +14,20 @@ export default async function AdminLayout({
 
   return (
     <div className="flex min-h-dvh">
-      <Sidebar items={adminNav} />
+      <Sidebar
+        items={adminNav}
+        headerExtra={<RoleViewSwitcher />}
+      />
       <div className="flex min-w-0 flex-1 flex-col">
         <TopBar
-          subtitle="Admin tools"
+          subtitle="Admin view"
           user={{
             name: user.name,
             role: user.role,
             avatarUrl: user.avatarUrl,
           }}
+          actions={<RoleViewSwitcher compact />}
+          canSwitchViews
         />
         <main className="mx-auto w-full max-w-6xl flex-1 px-4 pt-5 pb-28 sm:px-6 md:pb-10">
           {children}

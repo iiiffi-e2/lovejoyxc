@@ -13,9 +13,11 @@ import { Button } from "@/components/ui/button";
 export function AvatarUpload({
   avatarUrl,
   blobConfigured,
+  embedded,
 }: {
   avatarUrl?: string | null;
   blobConfigured: boolean;
+  embedded?: boolean;
 }) {
   const [state, setState] = useState<AvatarState>({});
   const [cropFile, setCropFile] = useState<File | null>(null);
@@ -80,51 +82,69 @@ export function AvatarUpload({
     );
   }
 
-  return (
+  const buttons = (
     <>
-      <div className="mt-4 space-y-3 border-t border-line pt-4">
-        <input
-          ref={fileRef}
-          type="file"
-          accept="image/jpeg,image/png,image/webp"
-          capture="user"
-          className="sr-only"
-          onChange={handleFileChange}
-        />
+      <input
+        ref={fileRef}
+        type="file"
+        accept="image/jpeg,image/png,image/webp"
+        capture="user"
+        className="sr-only"
+        onChange={handleFileChange}
+      />
+      <Button
+        type="button"
+        variant="outline"
+        size="sm"
+        disabled={pendingUpload}
+        onClick={() => fileRef.current?.click()}
+      >
+        <Camera className="h-4 w-4" />
+        Choose photo
+      </Button>
+
+      {avatarUrl ? (
         <Button
           type="button"
           variant="outline"
           size="sm"
-          disabled={pendingUpload}
-          onClick={() => fileRef.current?.click()}
+          disabled={pendingRemove}
+          onClick={handleRemove}
         >
-          <Camera className="h-4 w-4" />
-          Choose photo
+          <Trash2 className="h-4 w-4" />
+          {pendingRemove ? "Removing…" : "Remove photo"}
         </Button>
+      ) : null}
+    </>
+  );
 
-        {avatarUrl ? (
-          <Button
-            type="button"
-            variant="outline"
-            size="sm"
-            disabled={pendingRemove}
-            onClick={handleRemove}
-          >
-            <Trash2 className="h-4 w-4" />
-            {pendingRemove ? "Removing…" : "Remove photo"}
-          </Button>
-        ) : null}
+  const messages = (
+    <>
+      {state.error ? (
+        <p className="text-sm font-medium text-injury">{state.error}</p>
+      ) : null}
+      {removeError ? (
+        <p className="text-sm font-medium text-injury">{removeError}</p>
+      ) : null}
+      {state.ok ? (
+        <p className="text-sm font-medium text-success">Photo updated.</p>
+      ) : null}
+    </>
+  );
 
-        {state.error ? (
-          <p className="text-sm font-medium text-injury">{state.error}</p>
-        ) : null}
-        {removeError ? (
-          <p className="text-sm font-medium text-injury">{removeError}</p>
-        ) : null}
-        {state.ok ? (
-          <p className="text-sm font-medium text-success">Photo updated.</p>
-        ) : null}
-      </div>
+  return (
+    <>
+      {embedded ? (
+        <div className="mt-3 space-y-2">
+          <div className="flex flex-wrap gap-2">{buttons}</div>
+          {messages}
+        </div>
+      ) : (
+        <div className="mt-4 space-y-3 border-t border-line pt-4">
+          {buttons}
+          {messages}
+        </div>
+      )}
 
       {cropFile ? (
         <AvatarCropDialog

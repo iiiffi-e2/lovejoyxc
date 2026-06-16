@@ -79,11 +79,6 @@ export default async function CoachSettingsPage() {
               Export all logs (CSV)
             </Link>
           </Button>
-          {user.role === "ADMIN" ? (
-            <Button asChild variant="ghost" size="md">
-              <Link href="/admin">Go to admin tools →</Link>
-            </Button>
-          ) : null}
         </Card>
       </div>
     </div>

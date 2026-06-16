@@ -10,9 +10,11 @@ import { cn } from "@/lib/utils";
 export function Sidebar({
   items,
   homeHref,
+  headerExtra,
 }: {
   items: NavItem[];
   homeHref?: string;
+  headerExtra?: React.ReactNode;
 }) {
   const pathname = usePathname();
 
@@ -33,7 +35,8 @@ export function Sidebar({
           logo
         )}
       </div>
-      <nav className="mt-8 flex-1">
+      {headerExtra ? <div className="mt-6 px-2">{headerExtra}</div> : null}
+      <nav className={headerExtra ? "mt-6 flex-1" : "mt-8 flex-1"}>
         <ul className="space-y-1">
           {items.map((item) => {
             const active = isActive(pathname, item.href);

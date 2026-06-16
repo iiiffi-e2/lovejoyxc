@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
-import { LogOut, Settings } from "lucide-react";
+import { ClipboardList, LogOut, Settings, Shield } from "lucide-react";
 import { logoutAction } from "@/app/actions/auth";
 import { UserAvatar } from "@/components/user-avatar";
 import { settingsPath } from "@/lib/settings-path";
@@ -11,10 +11,12 @@ export function UserMenu({
   name,
   role,
   avatarUrl,
+  canSwitchViews,
 }: {
   name: string;
   role: string;
   avatarUrl?: string | null;
+  canSwitchViews?: boolean;
 }) {
   const [open, setOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
@@ -53,6 +55,27 @@ export function UserMenu({
               {role.toLowerCase()}
             </p>
           </div>
+          {canSwitchViews ? (
+            <>
+              <Link
+                href="/coach"
+                onClick={() => setOpen(false)}
+                className="flex w-full items-center gap-2 px-3 py-2.5 text-left text-sm font-semibold text-ink hover:bg-surface"
+              >
+                <ClipboardList className="h-4 w-4" />
+                Coach view
+              </Link>
+              <Link
+                href="/admin"
+                onClick={() => setOpen(false)}
+                className="flex w-full items-center gap-2 px-3 py-2.5 text-left text-sm font-semibold text-ink hover:bg-surface"
+              >
+                <Shield className="h-4 w-4" />
+                Admin view
+              </Link>
+              <div className="my-1 border-t border-line" />
+            </>
+          ) : null}
           <Link
             href={settingsPath(role)}
             onClick={() => setOpen(false)}

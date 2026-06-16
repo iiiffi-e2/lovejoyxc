@@ -8,12 +8,14 @@ export function TopBar({
   user,
   actions,
   homeHref,
+  canSwitchViews,
 }: {
   title?: string;
   subtitle?: string;
   user: { name: string; role: string; avatarUrl?: string | null };
   actions?: React.ReactNode;
   homeHref?: string;
+  canSwitchViews?: boolean;
 }) {
   return (
     <header className="sticky top-0 z-30 border-b border-line bg-white/90 backdrop-blur">
@@ -49,6 +51,7 @@ export function TopBar({
             name={user.name}
             role={user.role}
             avatarUrl={user.avatarUrl}
+            canSwitchViews={canSwitchViews}
           />
         </div>
       </div>

@@ -8,6 +8,7 @@ import { Badge } from "@/components/ui/badge";
 import { StatCard } from "@/components/stat-card";
 import { UserAvatar } from "@/components/user-avatar";
 import { AccountSettings } from "@/components/profile/account-settings";
+import { AvatarUpload } from "@/components/profile/avatar-upload";
 import { formatMiles, formatPace } from "@/lib/format";
 import {
   GENDER_TEAM_LABEL,
@@ -61,6 +62,11 @@ export default async function ProfilePage() {
             </div>
           </div>
         </div>
+        <AvatarUpload
+          avatarUrl={user.avatarUrl}
+          blobConfigured={blobConfigured}
+          embedded
+        />
         {team ? (
           <p className="mt-4 border-t border-line pt-3 text-sm text-gray-500">
             {team.name} · {team.season} {team.schoolYear}
@@ -73,6 +79,7 @@ export default async function ProfilePage() {
         email={user.email}
         avatarUrl={user.avatarUrl}
         blobConfigured={blobConfigured}
+        showAvatar={false}
       />
 
       <div>

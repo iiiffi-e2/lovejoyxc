@@ -10,27 +10,34 @@ export function AccountSettings({
   email,
   avatarUrl,
   blobConfigured,
+  showAvatar = true,
 }: {
   name: string;
   email: string;
   avatarUrl?: string | null;
   blobConfigured: boolean;
+  showAvatar?: boolean;
 }) {
   return (
     <div className="space-y-6">
-      <div>
-        <SectionTitle title="Account settings" />
-        <Card className="space-y-4 p-5">
-          <div className="flex items-center gap-4">
-            <UserAvatar name={name} avatarUrl={avatarUrl} size="lg" />
-            <div className="min-w-0">
-              <p className="font-bold text-ink">{name}</p>
-              <p className="truncate text-sm text-gray-500">{email}</p>
+      {showAvatar ? (
+        <div>
+          <SectionTitle title="Account settings" />
+          <Card className="space-y-4 p-5">
+            <div className="flex items-center gap-4">
+              <UserAvatar name={name} avatarUrl={avatarUrl} size="lg" />
+              <div className="min-w-0">
+                <p className="font-bold text-ink">{name}</p>
+                <p className="truncate text-sm text-gray-500">{email}</p>
+              </div>
             </div>
-          </div>
-          <AvatarUpload avatarUrl={avatarUrl} blobConfigured={blobConfigured} />
-        </Card>
-      </div>
+            <AvatarUpload
+              avatarUrl={avatarUrl}
+              blobConfigured={blobConfigured}
+            />
+          </Card>
+        </div>
+      ) : null}
 
       <div>
         <SectionTitle title="Email" />
