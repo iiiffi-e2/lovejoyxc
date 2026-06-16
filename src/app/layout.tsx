@@ -12,6 +12,12 @@ export const metadata: Metadata = {
   title: "Lovejoy XC Log",
   description:
     "Private team running log for the Lovejoy Leopards cross country team.",
+  applicationName: "Lovejoy XC Log",
+  appleWebApp: {
+    capable: true,
+    title: "Lovejoy XC",
+    statusBarStyle: "default",
+  },
 };
 
 export const viewport: Viewport = {

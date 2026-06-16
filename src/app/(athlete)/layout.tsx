@@ -2,6 +2,7 @@ import { requireRole } from "@/lib/auth";
 import { TopBar } from "@/components/nav/top-bar";
 import { Sidebar } from "@/components/nav/sidebar";
 import { BottomNav } from "@/components/nav/bottom-nav";
+import { InstallPrompt } from "@/components/install-prompt";
 import { athleteNav } from "@/components/nav/nav-config";
 
 export default async function AthleteLayout({
@@ -24,6 +25,7 @@ export default async function AthleteLayout({
           {children}
         </main>
         <BottomNav items={athleteNav} />
+        <InstallPrompt />
       </div>
     </div>
   );

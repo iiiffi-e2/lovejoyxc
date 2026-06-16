@@ -2,6 +2,7 @@ import { requireRole } from "@/lib/auth";
 import { TopBar } from "@/components/nav/top-bar";
 import { Sidebar } from "@/components/nav/sidebar";
 import { BottomNav } from "@/components/nav/bottom-nav";
+import { InstallPrompt } from "@/components/install-prompt";
 import { RoleViewSwitcher } from "@/components/nav/role-view-switcher";
 import { adminNav } from "@/components/nav/nav-config";
 
@@ -33,6 +34,7 @@ export default async function AdminLayout({
           {children}
         </main>
         <BottomNav items={adminNav} />
+        <InstallPrompt />
       </div>
     </div>
   );
