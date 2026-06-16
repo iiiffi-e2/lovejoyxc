@@ -1,6 +1,7 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
+import { redirect } from "next/navigation";
 import { z } from "zod";
 import type { GenderTeam, TeamGroup } from "@prisma/client";
 import { prisma } from "@/lib/prisma";
@@ -117,6 +118,30 @@ export async function toggleUserActive(id: string): Promise<void> {
   await prisma.user.update({ where: { id }, data: { active: !user.active } });
   revalidatePath("/admin/users");
   revalidatePath("/admin");
+}
+
+export async function deleteUser(
+  id: string,
+  _prev: AdminState,
+  formData: FormData,
+): Promise<AdminState> {
+  const admin = await requireRole("ADMIN");
+  const confirmation = String(formData.get("confirmation") ?? "").trim();
+  if (confirmation !== "CONFIRM") {
+    return { error: "Type CONFIRM to delete this person." };
+  }
+  if (admin.id === id) {
+    return { error: "You cannot delete your own account." };
+  }
+
+  const user = await prisma.user.findUnique({ where: { id } });
+  if (!user) return { error: "User not found." };
+
+  await prisma.user.delete({ where: { id } });
+
+  revalidatePath("/admin/users");
+  revalidatePath("/admin");
+  redirect("/admin/users");
 }
 
 const teamSchema = z.object({

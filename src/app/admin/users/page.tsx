@@ -1,13 +1,14 @@
 import Link from "next/link";
 import { requireRole } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
-import { createUser, toggleUserActive } from "@/app/actions/admin";
+import { createUser, deleteUser, toggleUserActive } from "@/app/actions/admin";
 import { PageHeading, SectionTitle } from "@/components/section";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Table, TableWrap, Td, Th, Tr } from "@/components/ui/table";
 import { UserForm } from "./user-form";
 import { ActiveToggle } from "./active-toggle";
+import { DeleteUserButton } from "./delete-user-button";
 import {
   GENDER_TEAM_LABEL,
   ROLE_LABEL,
@@ -88,11 +89,20 @@ export default async function AdminUsersPage() {
                     )}
                   </Td>
                   <Td>
-                    <ActiveToggle
-                      active={u.active}
-                      action={toggleUserActive.bind(null, u.id)}
-                      disabled={u.id === me.id}
-                    />
+                    <div className="flex items-center justify-end gap-1">
+                      <ActiveToggle
+                        active={u.active}
+                        action={toggleUserActive.bind(null, u.id)}
+                        disabled={u.id === me.id}
+                      />
+                      <DeleteUserButton
+                        name={u.name}
+                        roleLabel={ROLE_LABEL[u.role]}
+                        action={deleteUser.bind(null, u.id)}
+                        disabled={u.id === me.id}
+                        disabledReason="You cannot delete your own account"
+                      />
+                    </div>
                   </Td>
                 </Tr>
               ))}

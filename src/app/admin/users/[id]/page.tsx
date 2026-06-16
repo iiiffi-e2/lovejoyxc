@@ -3,9 +3,11 @@ import { notFound } from "next/navigation";
 import { ArrowLeft } from "lucide-react";
 import { requireRole } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
-import { updateUser } from "@/app/actions/admin";
-import { PageHeading } from "@/components/section";
+import { deleteUser, updateUser } from "@/app/actions/admin";
+import { PageHeading, SectionTitle } from "@/components/section";
+import { ROLE_LABEL } from "@/lib/labels";
 import { Card } from "@/components/ui/card";
+import { DeleteUserButton } from "../delete-user-button";
 import { UserForm } from "../user-form";
 
 export default async function EditUserPage({
@@ -13,7 +15,7 @@ export default async function EditUserPage({
 }: {
   params: Promise<{ id: string }>;
 }) {
-  await requireRole("ADMIN");
+  const me = await requireRole("ADMIN");
   const { id } = await params;
   const [user, teams] = await Promise.all([
     prisma.user.findUnique({ where: { id } }),
@@ -46,6 +48,25 @@ export default async function EditUserPage({
           }}
         />
       </Card>
+
+      <div className="mt-8">
+        <SectionTitle title="Danger zone" />
+        <Card className="border-red-200 p-5">
+          <p className="text-sm text-gray-600">
+            Permanently delete this person and all associated data. This cannot be undone.
+          </p>
+          <div className="mt-4">
+            <DeleteUserButton
+              name={user.name}
+              roleLabel={ROLE_LABEL[user.role]}
+              action={deleteUser.bind(null, id)}
+              disabled={user.id === me.id}
+              disabledReason="You cannot delete your own account"
+              variant="full"
+            />
+          </div>
+        </Card>
+      </div>
     </div>
   );
 }
