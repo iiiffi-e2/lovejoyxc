@@ -8,6 +8,7 @@ import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { FeelingChip } from "@/components/domain-badges";
 import { EmptyState } from "@/components/empty-state";
+import { UserAvatar } from "@/components/user-avatar";
 import { formatMiles, relativeDays } from "@/lib/format";
 import { scoreToFeeling, TEAM_GROUP_LABEL, GENDER_TEAM_LABEL } from "@/lib/labels";
 
@@ -46,9 +47,11 @@ export default async function CoachAthletesPage({
               <Card className="p-4 transition-all hover:border-brand/30 hover:shadow-md">
                 <div className="flex items-center justify-between gap-2">
                   <div className="flex items-center gap-3">
-                    <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-ink text-xs font-bold text-white">
-                      {initials(r.athlete.name)}
-                    </div>
+                    <UserAvatar
+                      name={r.athlete.name}
+                      avatarUrl={r.athlete.avatarUrl}
+                      size="md"
+                    />
                     <div>
                       <p className="font-bold text-ink">{r.athlete.name}</p>
                       <p className="text-xs text-gray-400">
@@ -98,13 +101,4 @@ export default async function CoachAthletesPage({
       )}
     </div>
   );
-}
-
-function initials(name: string) {
-  return name
-    .split(" ")
-    .map((p) => p[0])
-    .slice(0, 2)
-    .join("")
-    .toUpperCase();
 }

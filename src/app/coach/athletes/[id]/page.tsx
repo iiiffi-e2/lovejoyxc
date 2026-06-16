@@ -12,6 +12,7 @@ import { ShoeCard } from "@/components/shoe-card";
 import { MileageBarChart } from "@/components/charts/mileage-bar-chart";
 import { TrendLineChart } from "@/components/charts/trend-line-chart";
 import { EmptyState } from "@/components/empty-state";
+import { UserAvatar } from "@/components/user-avatar";
 import { CoachNotes } from "./coach-notes";
 import { FeelingChip } from "@/components/domain-badges";
 import { formatMiles, formatDate, formatPercent } from "@/lib/format";
@@ -47,14 +48,12 @@ export default async function AthleteProfilePage({
       <Card className="p-5">
         <div className="flex flex-wrap items-center justify-between gap-4">
           <div className="flex items-center gap-4">
-            <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-ink text-lg font-black text-white">
-              {athlete.name
-                .split(" ")
-                .map((p) => p[0])
-                .slice(0, 2)
-                .join("")
-                .toUpperCase()}
-            </div>
+            <UserAvatar
+              name={athlete.name}
+              avatarUrl={athlete.avatarUrl}
+              size="lg"
+              className="h-14 w-14 text-lg"
+            />
             <div>
               <h1 className="text-2xl font-extrabold tracking-tight text-ink">
                 {athlete.name}

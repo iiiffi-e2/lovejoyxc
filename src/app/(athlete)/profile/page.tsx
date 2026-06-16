@@ -5,6 +5,8 @@ import { PageHeading, SectionTitle } from "@/components/section";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { StatCard } from "@/components/stat-card";
+import { UserAvatar } from "@/components/user-avatar";
+import { AvatarUpload } from "@/components/profile/avatar-upload";
 import { formatMiles, formatPace } from "@/lib/format";
 import {
   GENDER_TEAM_LABEL,
@@ -33,12 +35,7 @@ export default async function ProfilePage() {
     ? Math.round(paces.reduce((a, b) => a + b, 0) / paces.length)
     : null;
 
-  const initials = user.name
-    .split(" ")
-    .map((p) => p[0])
-    .slice(0, 2)
-    .join("")
-    .toUpperCase();
+  const blobConfigured = !!process.env.BLOB_READ_WRITE_TOKEN;
 
   return (
     <div className="space-y-6 animate-fade-in">
@@ -46,9 +43,7 @@ export default async function ProfilePage() {
 
       <Card className="p-5">
         <div className="flex items-center gap-4">
-          <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-ink text-xl font-black text-white">
-            {initials}
-          </div>
+          <UserAvatar name={user.name} avatarUrl={user.avatarUrl} size="lg" />
           <div className="min-w-0">
             <h2 className="text-xl font-extrabold text-ink">{user.name}</h2>
             <p className="truncate text-sm text-gray-500">{user.email}</p>
@@ -70,6 +65,10 @@ export default async function ProfilePage() {
             {team.name} · {team.season} {team.schoolYear}
           </p>
         ) : null}
+        <AvatarUpload
+          avatarUrl={user.avatarUrl}
+          blobConfigured={blobConfigured}
+        />
       </Card>
 
       <div>
