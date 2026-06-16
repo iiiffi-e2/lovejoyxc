@@ -95,6 +95,16 @@ export const GENDER_TEAM_LABEL: Record<GenderTeam, string> = {
   GIRLS: "Girls",
 };
 
+/** Map an average feeling score (1-5) back to the nearest Feeling. */
+export function scoreToFeeling(score: number | null): Feeling | null {
+  if (score == null) return null;
+  if (score >= 4.5) return "GREAT";
+  if (score >= 3.5) return "GOOD";
+  if (score >= 2.5) return "OKAY";
+  if (score >= 1.5) return "ROUGH";
+  return "PAIN";
+}
+
 export function enumOptions<T extends string>(
   map: Record<T, string>,
 ): { value: T; label: string }[] {

@@ -299,6 +299,104 @@ export async function getCoachDashboard(filters: CoachFilters = {}) {
   };
 }
 
+function logWhereFromFilters(filters: CoachFilters): Prisma.WorkoutLogWhereInput {
+  const where: Prisma.WorkoutLogWhereInput = {
+    athlete: {
+      role: "ATHLETE",
+      active: true,
+      ...(filters.grade ? { grade: filters.grade } : {}),
+      ...(filters.teamGroup ? { teamGroup: filters.teamGroup as never } : {}),
+      ...(filters.genderTeam ? { genderTeam: filters.genderTeam as never } : {}),
+    },
+  };
+  if (filters.athleteId) where.athleteId = filters.athleteId;
+  if (filters.workoutType) where.workoutType = filters.workoutType as never;
+  if (filters.from || filters.to) {
+    where.date = {
+      ...(filters.from ? { gte: filters.from } : {}),
+      ...(filters.to ? { lte: filters.to } : {}),
+    };
+  }
+  return where;
+}
+
+export async function getCoachLogs(filters: CoachFilters = {}, take = 300) {
+  return prisma.workoutLog.findMany({
+    where: logWhereFromFilters(filters),
+    orderBy: [{ date: "desc" }, { createdAt: "desc" }],
+    take,
+    include: {
+      athlete: { select: { id: true, name: true, grade: true, teamGroup: true } },
+      shoe: { select: { name: true } },
+    },
+  });
+}
+
+export async function getFlaggedLogs() {
+  const since = addDays(startOfUTCDay(new Date()), -7);
+  return prisma.workoutLog.findMany({
+    where: {
+      date: { gte: since },
+      athlete: { role: "ATHLETE", active: true },
+      OR: [
+        { painFlag: true },
+        { feeling: { in: ["ROUGH", "PAIN"] } },
+        { effort: { gte: 9 } },
+        { soreness: { in: ["MODERATE", "HIGH"] } },
+      ],
+    },
+    orderBy: [{ date: "desc" }],
+    include: {
+      athlete: { select: { id: true, name: true } },
+      shoe: { select: { name: true } },
+    },
+    take: 50,
+  });
+}
+
+export async function getWeeklyMileageByAthlete(
+  weeks = 6,
+  filters: CoachFilters = {},
+) {
+  const athletes = await getCoachAthletes(filters);
+  const ranges = lastWeeks(weeks);
+  const since = ranges[0].start;
+
+  const logs = await prisma.workoutLog.findMany({
+    where: { athleteId: { in: athletes.map((a) => a.id) }, date: { gte: since } },
+    select: { athleteId: true, date: true, distance: true },
+  });
+
+  const labels = ranges.map((w) =>
+    w.start.toLocaleDateString("en-US", {
+      month: "numeric",
+      day: "numeric",
+      timeZone: "UTC",
+    }),
+  );
+
+  const rows = athletes.map((a) => {
+    const aLogs = logs.filter((l) => l.athleteId === a.id);
+    const weekly = ranges.map((w) => milesInRange(aLogs, w.start, w.end));
+    const total = Math.round(weekly.reduce((s, v) => s + v, 0) * 10) / 10;
+    const thisWeek = weekly[weekly.length - 1];
+    const lastWeek = weekly[weekly.length - 2] ?? 0;
+    return {
+      athlete: a,
+      weekly,
+      total,
+      change: changePercent(thisWeek, lastWeek),
+      spike: isSpike(thisWeek, lastWeek),
+    };
+  });
+
+  const teamWeekly = ranges.map((_, i) =>
+    Math.round(rows.reduce((s, r) => s + r.weekly[i], 0) * 10) / 10,
+  );
+
+  return { labels, rows, teamWeekly };
+}
+
 export async function getAthleteProfileForCoach(athleteId: string) {
   const athlete = await prisma.user.findUnique({ where: { id: athleteId } });
   if (!athlete) return null;
