@@ -17,7 +17,11 @@ export default async function AdminLayout({
       <div className="flex min-w-0 flex-1 flex-col">
         <TopBar
           subtitle="Admin tools"
-          user={{ name: user.name, role: user.role }}
+          user={{
+            name: user.name,
+            role: user.role,
+            avatarUrl: user.avatarUrl,
+          }}
         />
         <main className="mx-auto w-full max-w-6xl flex-1 px-4 pt-5 pb-28 sm:px-6 md:pb-10">
           {children}

@@ -9,7 +9,7 @@ export function TopBar({
 }: {
   title?: string;
   subtitle?: string;
-  user: { name: string; role: string };
+  user: { name: string; role: string; avatarUrl?: string | null };
   actions?: React.ReactNode;
 }) {
   return (
@@ -32,7 +32,11 @@ export function TopBar({
         </div>
         <div className="flex items-center gap-2">
           {actions}
-          <UserMenu name={user.name} role={user.role} />
+          <UserMenu
+            name={user.name}
+            role={user.role}
+            avatarUrl={user.avatarUrl}
+          />
         </div>
       </div>
     </header>

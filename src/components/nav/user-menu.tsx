@@ -3,8 +3,17 @@
 import { useEffect, useRef, useState } from "react";
 import { LogOut } from "lucide-react";
 import { logoutAction } from "@/app/actions/auth";
+import { UserAvatar } from "@/components/user-avatar";
 
-export function UserMenu({ name, role }: { name: string; role: string }) {
+export function UserMenu({
+  name,
+  role,
+  avatarUrl,
+}: {
+  name: string;
+  role: string;
+  avatarUrl?: string | null;
+}) {
   const [open, setOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
 
@@ -18,13 +27,6 @@ export function UserMenu({ name, role }: { name: string; role: string }) {
     return () => document.removeEventListener("mousedown", onClick);
   }, []);
 
-  const initials = name
-    .split(" ")
-    .map((p) => p[0])
-    .slice(0, 2)
-    .join("")
-    .toUpperCase();
-
   return (
     <div className="relative" ref={ref}>
       <button
@@ -32,9 +34,7 @@ export function UserMenu({ name, role }: { name: string; role: string }) {
         onClick={() => setOpen((v) => !v)}
         className="flex items-center gap-2 rounded-full border border-line bg-white py-1 pr-3 pl-1 transition-colors hover:bg-surface"
       >
-        <span className="flex h-8 w-8 items-center justify-center rounded-full bg-ink text-xs font-bold text-white">
-          {initials}
-        </span>
+        <UserAvatar name={name} avatarUrl={avatarUrl} size="sm" />
         <span className="hidden text-left sm:block">
           <span className="block text-xs font-bold text-ink">{name}</span>
           <span className="block text-[11px] text-gray-400 capitalize">
