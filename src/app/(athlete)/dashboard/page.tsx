@@ -150,7 +150,21 @@ export default async function AthleteDashboard() {
             ))}
           </div>
         </div>
-      ) : null}
+      ) : (
+        <div>
+          <SectionTitle title="Your shoes" />
+          <EmptyState
+            icon={Footprints}
+            title="No shoes yet"
+            description="Add your running shoes to track mileage and know when it's time for a new pair."
+            action={
+              <Button asChild variant="outline" size="sm">
+                <Link href="/shoes">Add shoes</Link>
+              </Button>
+            }
+          />
+        </div>
+      )}
 
       <div>
         <SectionTitle title="Recent logs" action={{ label: "See all", href: "/history" }} />

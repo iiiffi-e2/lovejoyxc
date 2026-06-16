@@ -7,13 +7,31 @@ import { NAV_ICONS } from "./nav-icons";
 import { LogoWordmark } from "@/components/logo";
 import { cn } from "@/lib/utils";
 
-export function Sidebar({ items }: { items: NavItem[] }) {
+export function Sidebar({
+  items,
+  homeHref,
+}: {
+  items: NavItem[];
+  homeHref?: string;
+}) {
   const pathname = usePathname();
+
+  const logo = <LogoWordmark />;
 
   return (
     <aside className="sticky top-0 hidden h-dvh w-64 shrink-0 flex-col border-r border-line bg-white px-4 py-6 md:flex">
       <div className="px-2">
-        <LogoWordmark />
+        {homeHref ? (
+          <Link
+            href={homeHref}
+            className="block rounded-lg transition-opacity hover:opacity-80"
+            aria-label="Go to dashboard"
+          >
+            {logo}
+          </Link>
+        ) : (
+          logo
+        )}
       </div>
       <nav className="mt-8 flex-1">
         <ul className="space-y-1">
@@ -44,6 +62,8 @@ export function Sidebar({ items }: { items: NavItem[] }) {
 }
 
 function isActive(pathname: string, href: string): boolean {
-  if (href === "/coach" || href === "/admin") return pathname === href;
+  if (href === "/coach" || href === "/admin" || href === "/dashboard") {
+    return pathname === href;
+  }
   return pathname === href || pathname.startsWith(`${href}/`);
 }

@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useActionState, useMemo, useState } from "react";
 import { useFormStatus } from "react-dom";
 import { AlertCircle, Check } from "lucide-react";
@@ -210,6 +211,14 @@ export function WorkoutForm({
             ))}
           </Select>
         </div>
+      ) : null}
+      {isRunning && shoes.length === 0 ? (
+        <p className="rounded-xl border border-line bg-surface px-4 py-3 text-sm text-gray-600">
+          <Link href="/shoes" className="font-semibold text-brand hover:underline">
+            Add shoes
+          </Link>{" "}
+          to track mileage on each run.
+        </p>
       ) : null}
 
       {/* Feeling */}
