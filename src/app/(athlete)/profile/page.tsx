@@ -1,5 +1,6 @@
 import { Activity, Gauge, Route, Trophy } from "lucide-react";
 import { requireRole } from "@/lib/auth";
+import { isBlobConfigured } from "@/lib/blob-config";
 import { prisma } from "@/lib/prisma";
 import { PageHeading, SectionTitle } from "@/components/section";
 import { Card } from "@/components/ui/card";
@@ -35,7 +36,7 @@ export default async function ProfilePage() {
     ? Math.round(paces.reduce((a, b) => a + b, 0) / paces.length)
     : null;
 
-  const blobConfigured = !!process.env.BLOB_READ_WRITE_TOKEN;
+  const blobConfigured = isBlobConfigured();
 
   return (
     <div className="space-y-6 animate-fade-in">

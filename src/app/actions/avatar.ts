@@ -4,6 +4,7 @@ import { put, del } from "@vercel/blob";
 import sharp from "sharp";
 import { revalidatePath } from "next/cache";
 import { requireRole } from "@/lib/auth";
+import { isBlobConfigured } from "@/lib/blob-config";
 import { prisma } from "@/lib/prisma";
 
 const MAX_BYTES = 2 * 1024 * 1024;
@@ -16,7 +17,7 @@ export async function uploadAvatar(
   formData: FormData,
 ): Promise<AvatarState> {
   const user = await requireRole("ATHLETE");
-  if (!process.env.BLOB_READ_WRITE_TOKEN) {
+  if (!isBlobConfigured()) {
     return { error: "Photo upload is not configured in this environment." };
   }
 
@@ -65,7 +66,7 @@ export async function uploadAvatar(
 export async function removeAvatar(): Promise<AvatarState> {
   const user = await requireRole("ATHLETE");
   if (user.avatarUrl) {
-    if (process.env.BLOB_READ_WRITE_TOKEN) {
+    if (isBlobConfigured()) {
       try {
         await del(user.avatarUrl);
       } catch {
