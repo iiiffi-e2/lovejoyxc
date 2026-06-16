@@ -1,7 +1,6 @@
 "use server";
 
 import { put, del } from "@vercel/blob";
-import sharp from "sharp";
 import { revalidatePath } from "next/cache";
 import type { Role } from "@prisma/client";
 import { requireUser } from "@/lib/auth";
@@ -51,14 +50,8 @@ export async function uploadAvatar(
   }
 
   const buffer = Buffer.from(await file.arrayBuffer());
-  const resized = await sharp(buffer)
-    .rotate()
-    .resize(256, 256, { fit: "cover" })
-    .webp({ quality: 85 })
-    .toBuffer();
-
   const pathname = `avatars/${user.id}.webp`;
-  const blob = await put(pathname, resized, {
+  const blob = await put(pathname, buffer, {
     access: "public",
     contentType: "image/webp",
     addRandomSuffix: false,
