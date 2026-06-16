@@ -1,0 +1,184 @@
+// Lovejoy XC Log — Prisma schema
+// Private team running log for the Lovejoy Leopards cross country team.
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider          = "postgresql"
+  url               = env("DATABASE_URL")
+  shadowDatabaseUrl = env("SHADOW_DATABASE_URL")
+}
+
+enum Role {
+  ATHLETE
+  COACH
+  ADMIN
+}
+
+enum GenderTeam {
+  BOYS
+  GIRLS
+}
+
+enum TeamGroup {
+  VARSITY
+  JV
+  FRESHMAN
+}
+
+enum WorkoutType {
+  EASY_RUN
+  LONG_RUN
+  WORKOUT
+  RACE
+  RECOVERY_RUN
+  CROSS_TRAINING
+  STRENGTH
+  REST_DAY
+  INJURY_RECOVERY
+}
+
+enum Feeling {
+  GREAT
+  GOOD
+  OKAY
+  ROUGH
+  PAIN
+}
+
+enum Soreness {
+  NONE
+  MILD
+  MODERATE
+  HIGH
+}
+
+enum Surface {
+  ROAD
+  TRAIL
+  TRACK
+  GRASS
+  TREADMILL
+  OTHER
+}
+
+model User {
+  id           String      @id @default(cuid())
+  name         String
+  email        String      @unique
+  passwordHash String
+  role         Role        @default(ATHLETE)
+  grade        Int?
+  genderTeam   GenderTeam?
+  teamGroup    TeamGroup?
+  active       Boolean     @default(true)
+  createdAt    DateTime    @default(now())
+  updatedAt    DateTime    @updatedAt
+
+  teamId String?
+  team   Team?   @relation(fields: [teamId], references: [id])
+
+  workoutLogs    WorkoutLog[]
+  shoes          Shoe[]
+  sessions       Session[]
+  // Coach notes written by this user (when acting as a coach)
+  authoredNotes  CoachNote[]  @relation("CoachNoteAuthor")
+  // Coach notes about this user (when acting as an athlete)
+  receivedNotes  CoachNote[]  @relation("CoachNoteAthlete")
+
+  @@index([role])
+  @@index([teamId])
+  @@index([active])
+}
+
+model Team {
+  id         String   @id @default(cuid())
+  name       String
+  season     String
+  schoolYear String
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  members     User[]
+  workoutLogs WorkoutLog[]
+
+  @@unique([name, schoolYear])
+  @@index([schoolYear])
+}
+
+model WorkoutLog {
+  id          String      @id @default(cuid())
+  date        DateTime    @db.Date
+  workoutType WorkoutType
+  distance    Float       @default(0) // miles
+  durationSec Int? // total seconds
+  paceSec     Int? // seconds per mile (auto-calculated)
+  effort      Int? // 1-10
+  feeling     Feeling?
+  soreness    Soreness    @default(NONE)
+  painFlag    Boolean     @default(false)
+  surface     Surface?
+  notes       String?
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+
+  athleteId String
+  athlete   User   @relation(fields: [athleteId], references: [id], onDelete: Cascade)
+
+  teamId String?
+  team   Team?   @relation(fields: [teamId], references: [id])
+
+  shoeId String?
+  shoe   Shoe?   @relation(fields: [shoeId], references: [id])
+
+  @@index([athleteId, date])
+  @@index([teamId, date])
+  @@index([date])
+  @@index([painFlag])
+}
+
+model Shoe {
+  id           String       @id @default(cuid())
+  name         String
+  startDate    DateTime     @db.Date
+  mileageLimit Float        @default(400)
+  totalMiles   Float        @default(0)
+  retired      Boolean      @default(false)
+  createdAt    DateTime     @default(now())
+  updatedAt    DateTime     @updatedAt
+
+  athleteId String
+  athlete   User   @relation(fields: [athleteId], references: [id], onDelete: Cascade)
+
+  workoutLogs WorkoutLog[]
+
+  @@index([athleteId])
+}
+
+model CoachNote {
+  id        String   @id @default(cuid())
+  note      String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  coachId String
+  coach   User   @relation("CoachNoteAuthor", fields: [coachId], references: [id], onDelete: Cascade)
+
+  athleteId String
+  athlete   User   @relation("CoachNoteAthlete", fields: [athleteId], references: [id], onDelete: Cascade)
+
+  @@index([athleteId, createdAt])
+}
+
+model Session {
+  id        String   @id @default(cuid())
+  token     String   @unique
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+
+  @@index([userId])
+}
