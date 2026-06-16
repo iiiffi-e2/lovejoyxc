@@ -13,7 +13,7 @@ export default async function AthleteLayout({
   return (
     <div className="flex min-h-dvh flex-col">
       <TopBar
-        title="Lovejoy XC Log"
+        homeHref="/dashboard"
         subtitle={`Welcome back, ${user.name.split(" ")[0]}`}
         user={{ name: user.name, role: user.role, avatarUrl: user.avatarUrl }}
       />
