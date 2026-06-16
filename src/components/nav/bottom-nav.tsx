@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import type { NavItem } from "./nav-config";
+import { NAV_ICONS } from "./nav-icons";
 import { cn } from "@/lib/utils";
 
 export function BottomNav({ items }: { items: NavItem[] }) {
@@ -16,7 +17,7 @@ export function BottomNav({ items }: { items: NavItem[] }) {
       >
         {items.map((item) => {
           const active = isActive(pathname, item.href);
-          const Icon = item.icon;
+          const Icon = NAV_ICONS[item.icon];
           return (
             <li key={item.href} className="flex-1">
               <Link

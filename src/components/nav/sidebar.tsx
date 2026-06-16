@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import type { NavItem } from "./nav-config";
+import { NAV_ICONS } from "./nav-icons";
 import { LogoWordmark } from "@/components/logo";
 import { cn } from "@/lib/utils";
 
@@ -18,7 +19,7 @@ export function Sidebar({ items }: { items: NavItem[] }) {
         <ul className="space-y-1">
           {items.map((item) => {
             const active = isActive(pathname, item.href);
-            const Icon = item.icon;
+            const Icon = NAV_ICONS[item.icon];
             return (
               <li key={item.href}>
                 <Link
