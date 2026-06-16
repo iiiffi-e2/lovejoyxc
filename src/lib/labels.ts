@@ -99,6 +99,8 @@ export const GENDER_TEAM_LABEL: Record<GenderTeam, string> = {
 export const SCHEDULE_EVENT_TYPE_LABEL: Record<ScheduleEventType, string> = {
   PRACTICE: "Practice",
   MEET: "Meet",
+  CAMP: "Camp",
+  OTHER: "Other",
 };
 
 /** Map an average feeling score (1-5) back to the nearest Feeling. */

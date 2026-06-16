@@ -149,3 +149,8 @@ export function formatScheduleTimeRange(
   if (start && end) return `${start} – ${end}`;
   return start || end;
 }
+
+/** Build a Google Maps search URL for a location string. */
+export function googleMapsUrl(location: string): string {
+  return `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(location.trim())}`;
+}

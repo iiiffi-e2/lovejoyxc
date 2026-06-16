@@ -53,6 +53,8 @@ const SCHEDULE_TONE: Record<
 > = {
   PRACTICE: "neutral",
   MEET: "brand",
+  CAMP: "success",
+  OTHER: "warning",
 };
 
 export function ScheduleEventTypeBadge({ type }: { type: ScheduleEventType }) {

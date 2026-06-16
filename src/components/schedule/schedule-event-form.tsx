@@ -10,8 +10,9 @@ import {
 } from "@/app/actions/schedule";
 import { Button } from "@/components/ui/button";
 import { Input, Label, Select, Textarea } from "@/components/ui/field";
-import type { ScheduleEventCardData } from "./schedule-event-card";
+import { SCHEDULE_EVENT_TYPE_LABEL } from "@/lib/labels";
 import { toDateInputValue } from "@/lib/format";
+import type { ScheduleEventCardData } from "./schedule-event-card";
 
 export function ScheduleEventForm({
   event,
@@ -38,8 +39,11 @@ export function ScheduleEventForm({
         <div>
           <Label htmlFor="type">Type</Label>
           <Select id="type" name="type" defaultValue={event?.type ?? "PRACTICE"} required>
-            <option value="PRACTICE">Practice</option>
-            <option value="MEET">Meet</option>
+            {Object.entries(SCHEDULE_EVENT_TYPE_LABEL).map(([value, label]) => (
+              <option key={value} value={value}>
+                {label}
+              </option>
+            ))}
           </Select>
         </div>
         <div>

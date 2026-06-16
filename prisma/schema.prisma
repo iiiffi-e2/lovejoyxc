@@ -67,6 +67,8 @@ enum Surface {
 enum ScheduleEventType {
   PRACTICE
   MEET
+  CAMP
+  OTHER
 }
 
 model User {

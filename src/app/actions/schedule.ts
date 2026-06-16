@@ -17,7 +17,7 @@ const optionalText = (max: number) =>
 
 const eventSchema = z.object({
   id: z.string().optional(),
-  type: z.enum(["PRACTICE", "MEET"]),
+  type: z.enum(["PRACTICE", "MEET", "CAMP", "OTHER"]),
   title: z.string().trim().min(1, "Title is required").max(120),
   date: z.string().min(1, "Date is required"),
   startTime: optionalText(10),

@@ -1,7 +1,7 @@
 import { MapPin } from "lucide-react";
 import type { ScheduleEventType } from "@prisma/client";
 import { ScheduleEventTypeBadge } from "@/components/domain-badges";
-import { formatDate, formatScheduleTimeRange, formatWeekday } from "@/lib/format";
+import { formatDate, formatScheduleTimeRange, formatWeekday, googleMapsUrl } from "@/lib/format";
 
 export type ScheduleEventCardData = {
   id: string;
@@ -40,7 +40,14 @@ export function ScheduleEventCard({
           {event.location ? (
             <p className="mt-1 flex items-center gap-1.5 text-sm text-gray-600">
               <MapPin className="h-3.5 w-3.5 shrink-0" aria-hidden />
-              {event.location}
+              <a
+                href={googleMapsUrl(event.location)}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="font-medium text-brand hover:underline"
+              >
+                {event.location}
+              </a>
             </p>
           ) : null}
           {event.notes ? (
