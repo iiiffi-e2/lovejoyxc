@@ -3,7 +3,8 @@
 import { put, del } from "@vercel/blob";
 import sharp from "sharp";
 import { revalidatePath } from "next/cache";
-import { requireRole } from "@/lib/auth";
+import type { Role } from "@prisma/client";
+import { requireUser } from "@/lib/auth";
 import { isBlobConfigured } from "@/lib/blob-config";
 import { prisma } from "@/lib/prisma";
 
@@ -12,11 +13,28 @@ const ALLOWED = new Set(["image/jpeg", "image/png", "image/webp"]);
 
 export type AvatarState = { error?: string; ok?: boolean };
 
+function revalidateForRole(role: Role) {
+  revalidatePath("/profile");
+  revalidatePath("/coach/settings");
+  revalidatePath("/admin/settings");
+  switch (role) {
+    case "ATHLETE":
+      revalidatePath("/dashboard", "layout");
+      break;
+    case "COACH":
+      revalidatePath("/coach", "layout");
+      break;
+    case "ADMIN":
+      revalidatePath("/admin", "layout");
+      break;
+  }
+}
+
 export async function uploadAvatar(
   _prev: AvatarState,
   formData: FormData,
 ): Promise<AvatarState> {
-  const user = await requireRole("ATHLETE");
+  const user = await requireUser();
   if (!isBlobConfigured()) {
     return { error: "Photo upload is not configured in this environment." };
   }
@@ -59,12 +77,12 @@ export async function uploadAvatar(
     data: { avatarUrl: blob.url },
   });
 
-  revalidatePath("/profile");
+  revalidateForRole(user.role);
   return { ok: true };
 }
 
 export async function removeAvatar(): Promise<AvatarState> {
-  const user = await requireRole("ATHLETE");
+  const user = await requireUser();
   if (user.avatarUrl) {
     if (isBlobConfigured()) {
       try {
@@ -78,6 +96,6 @@ export async function removeAvatar(): Promise<AvatarState> {
       data: { avatarUrl: null },
     });
   }
-  revalidatePath("/profile");
+  revalidateForRole(user.role);
   return { ok: true };
 }

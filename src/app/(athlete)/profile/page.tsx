@@ -7,7 +7,7 @@ import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { StatCard } from "@/components/stat-card";
 import { UserAvatar } from "@/components/user-avatar";
-import { AvatarUpload } from "@/components/profile/avatar-upload";
+import { AccountSettings } from "@/components/profile/account-settings";
 import { formatMiles, formatPace } from "@/lib/format";
 import {
   GENDER_TEAM_LABEL,
@@ -66,11 +66,14 @@ export default async function ProfilePage() {
             {team.name} · {team.season} {team.schoolYear}
           </p>
         ) : null}
-        <AvatarUpload
-          avatarUrl={user.avatarUrl}
-          blobConfigured={blobConfigured}
-        />
       </Card>
+
+      <AccountSettings
+        name={user.name}
+        email={user.email}
+        avatarUrl={user.avatarUrl}
+        blobConfigured={blobConfigured}
+      />
 
       <div>
         <SectionTitle title="Season totals" />

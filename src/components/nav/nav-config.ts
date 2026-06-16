@@ -40,4 +40,5 @@ export const adminNav: NavItem[] = [
   { href: "/admin/users", label: "People", icon: "people" },
   { href: "/admin/teams", label: "Teams", icon: "teams" },
   { href: "/admin/reports", label: "Reports", icon: "reports" },
+  { href: "/admin/settings", label: "Settings", icon: "settings" },
 ];

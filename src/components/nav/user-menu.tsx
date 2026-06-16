@@ -1,9 +1,11 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { LogOut } from "lucide-react";
+import Link from "next/link";
+import { LogOut, Settings } from "lucide-react";
 import { logoutAction } from "@/app/actions/auth";
 import { UserAvatar } from "@/components/user-avatar";
+import { settingsPath } from "@/lib/settings-path";
 
 export function UserMenu({
   name,
@@ -51,6 +53,14 @@ export function UserMenu({
               {role.toLowerCase()}
             </p>
           </div>
+          <Link
+            href={settingsPath(role)}
+            onClick={() => setOpen(false)}
+            className="flex w-full items-center gap-2 px-3 py-2.5 text-left text-sm font-semibold text-ink hover:bg-surface"
+          >
+            <Settings className="h-4 w-4" />
+            Account settings
+          </Link>
           <form action={logoutAction}>
             <button
               type="submit"

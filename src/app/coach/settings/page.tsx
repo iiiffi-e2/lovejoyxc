@@ -1,14 +1,16 @@
 import Link from "next/link";
 import { Download, Lock, ShieldCheck, Users } from "lucide-react";
 import { requireRole } from "@/lib/auth";
+import { isBlobConfigured } from "@/lib/blob-config";
 import { prisma } from "@/lib/prisma";
 import { PageHeading, SectionTitle } from "@/components/section";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
+import { AccountSettings } from "@/components/profile/account-settings";
 
 export default async function CoachSettingsPage() {
   const user = await requireRole("COACH", "ADMIN");
+  const blobConfigured = isBlobConfigured();
   const [teams, athleteCount, coachCount] = await Promise.all([
     prisma.team.findMany({ orderBy: { createdAt: "desc" } }),
     prisma.user.count({ where: { role: "ATHLETE", active: true } }),
@@ -19,18 +21,12 @@ export default async function CoachSettingsPage() {
     <div className="space-y-7 animate-fade-in">
       <PageHeading title="Settings" description="Team configuration and account." />
 
-      <div>
-        <SectionTitle title="Your account" />
-        <Card className="p-5">
-          <div className="flex items-center justify-between gap-3">
-            <div>
-              <p className="font-bold text-ink">{user.name}</p>
-              <p className="text-sm text-gray-500">{user.email}</p>
-            </div>
-            <Badge tone="brand">{user.role === "ADMIN" ? "Admin" : "Coach"}</Badge>
-          </div>
-        </Card>
-      </div>
+      <AccountSettings
+        name={user.name}
+        email={user.email}
+        avatarUrl={user.avatarUrl}
+        blobConfigured={blobConfigured}
+      />
 
       <div>
         <SectionTitle title="Teams & seasons" />
