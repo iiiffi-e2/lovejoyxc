@@ -101,15 +101,25 @@ export async function getAthleteShoes(athleteId: string) {
   });
 }
 
-/** Recompute a shoe's total mileage from its logged runs. */
+/** Recompute a shoe's total mileage from starting miles plus logged runs. */
 export async function recomputeShoeMiles(shoeId: string) {
+  const shoe = await prisma.shoe.findUnique({
+    where: { id: shoeId },
+    select: { startingMiles: true },
+  });
+  if (!shoe) return;
+
   const agg = await prisma.workoutLog.aggregate({
     where: { shoeId },
     _sum: { distance: true },
   });
+  const loggedMiles = agg._sum.distance ?? 0;
   await prisma.shoe.update({
     where: { id: shoeId },
-    data: { totalMiles: Math.round((agg._sum.distance ?? 0) * 10) / 10 },
+    data: {
+      totalMiles:
+        Math.round((shoe.startingMiles + loggedMiles) * 10) / 10,
+    },
   });
 }
 
@@ -500,6 +510,7 @@ export type ScheduleEventRow = {
   title: string;
   date: Date;
   startTime: string | null;
+  endTime: string | null;
   location: string | null;
   notes: string | null;
 };
@@ -524,6 +535,7 @@ export async function getScheduleEventsForTeam(
       title: true,
       date: true,
       startTime: true,
+      endTime: true,
       location: true,
       notes: true,
     },

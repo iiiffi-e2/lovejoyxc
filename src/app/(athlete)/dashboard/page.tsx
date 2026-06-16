@@ -16,7 +16,6 @@ import { Card, CardContent } from "@/components/ui/card";
 import { StatCard } from "@/components/stat-card";
 import { SectionTitle } from "@/components/section";
 import { LogList } from "@/components/log-row";
-import { ShoeCard } from "@/components/shoe-card";
 import { EmptyState } from "@/components/empty-state";
 import { MileageBarChart } from "@/components/charts/mileage-bar-chart";
 import { AlertCard } from "@/components/alert-card";
@@ -171,31 +170,6 @@ export default async function AthleteDashboard() {
           />
         )}
       </div>
-
-      {data.shoes.length > 0 ? (
-        <div>
-          <SectionTitle title="Your shoes" action={{ label: "Manage", href: "/shoes" }} />
-          <div className="grid gap-3 sm:grid-cols-2">
-            {data.shoes.slice(0, 2).map((shoe) => (
-              <ShoeCard key={shoe.id} shoe={shoe} />
-            ))}
-          </div>
-        </div>
-      ) : (
-        <div>
-          <SectionTitle title="Your shoes" />
-          <EmptyState
-            icon={Footprints}
-            title="No shoes yet"
-            description="Add your running shoes to track mileage and know when it's time for a new pair."
-            action={
-              <Button asChild variant="outline" size="sm">
-                <Link href="/shoes">Add shoes</Link>
-              </Button>
-            }
-          />
-        </div>
-      )}
 
       <div>
         <SectionTitle title="Recent logs" action={{ label: "See all", href: "/history" }} />

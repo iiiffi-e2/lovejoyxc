@@ -53,6 +53,24 @@ export function AddShoeForm() {
             />
           </div>
         </div>
+        <div>
+          <Label htmlFor="startingMiles">
+            Starting mileage{" "}
+            <span className="font-normal text-gray-400">(optional)</span>
+          </Label>
+          <Input
+            id="startingMiles"
+            name="startingMiles"
+            type="number"
+            min="0"
+            max="2000"
+            step="0.1"
+            placeholder="0"
+          />
+          <p className="mt-1 text-xs text-gray-400">
+            Miles already on the shoe before you started tracking here.
+          </p>
+        </div>
         {state.error ? (
           <p className="text-sm font-medium text-injury">{state.error}</p>
         ) : null}

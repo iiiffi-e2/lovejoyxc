@@ -63,7 +63,7 @@ export function ScheduleEventForm({
           />
         </div>
         <div>
-          <Label htmlFor="startTime">Time (optional)</Label>
+          <Label htmlFor="startTime">Start time (optional)</Label>
           <Input
             id="startTime"
             name="startTime"
@@ -72,6 +72,15 @@ export function ScheduleEventForm({
           />
         </div>
         <div>
+          <Label htmlFor="endTime">End time (optional)</Label>
+          <Input
+            id="endTime"
+            name="endTime"
+            type="time"
+            defaultValue={event?.endTime ?? ""}
+          />
+        </div>
+        <div className="sm:col-span-2">
           <Label htmlFor="location">Location (optional)</Label>
           <Input
             id="location"

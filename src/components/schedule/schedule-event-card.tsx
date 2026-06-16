@@ -1,7 +1,7 @@
 import { MapPin } from "lucide-react";
 import type { ScheduleEventType } from "@prisma/client";
 import { ScheduleEventTypeBadge } from "@/components/domain-badges";
-import { formatDate, formatScheduleTime, formatWeekday } from "@/lib/format";
+import { formatDate, formatScheduleTimeRange, formatWeekday } from "@/lib/format";
 
 export type ScheduleEventCardData = {
   id: string;
@@ -9,6 +9,7 @@ export type ScheduleEventCardData = {
   title: string;
   date: Date;
   startTime: string | null;
+  endTime: string | null;
   location: string | null;
   notes: string | null;
 };
@@ -20,7 +21,7 @@ export function ScheduleEventCard({
   event: ScheduleEventCardData;
   muted?: boolean;
 }) {
-  const time = formatScheduleTime(event.startTime);
+  const time = formatScheduleTimeRange(event.startTime, event.endTime);
 
   return (
     <article

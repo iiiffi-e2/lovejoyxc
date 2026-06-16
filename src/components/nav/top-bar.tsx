@@ -22,15 +22,10 @@ export function TopBar({
           {homeHref ? (
             <Link
               href={homeHref}
-              className="shrink-0 rounded-lg transition-opacity hover:opacity-80"
+              className="shrink-0 rounded-lg transition-opacity hover:opacity-80 md:hidden"
               aria-label="Go to dashboard"
             >
-              <span className="sm:hidden">
-                <Logo size="sm" />
-              </span>
-              <span className="hidden sm:block">
-                <LogoWordmark />
-              </span>
+              <LogoWordmark />
             </Link>
           ) : (
             <span className="md:hidden">

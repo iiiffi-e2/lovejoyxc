@@ -10,6 +10,7 @@ const schema = z.object({
   name: z.string().min(1, "Name your shoes").max(80),
   startDate: z.string().min(1),
   mileageLimit: z.coerce.number().min(50).max(1000).default(400),
+  startingMiles: z.coerce.number().min(0).max(2000).optional(),
 });
 
 export type ShoeFormState = { error?: string; ok?: boolean };
@@ -19,16 +20,23 @@ export async function addShoe(
   formData: FormData,
 ): Promise<ShoeFormState> {
   const user = await requireUser();
+  const startingMilesRaw = formData.get("startingMiles");
   const parsed = schema.safeParse({
     name: formData.get("name"),
     startDate:
       (formData.get("startDate") as string) ||
       new Date().toISOString().slice(0, 10),
     mileageLimit: formData.get("mileageLimit") || 400,
+    startingMiles:
+      startingMilesRaw === "" || startingMilesRaw == null
+        ? undefined
+        : startingMilesRaw,
   });
   if (!parsed.success) {
     return { error: parsed.error.issues[0]?.message ?? "Invalid form." };
   }
+
+  const startingMiles = parsed.data.startingMiles ?? 0;
 
   await prisma.shoe.create({
     data: {
@@ -36,6 +44,8 @@ export async function addShoe(
       name: parsed.data.name,
       startDate: dateInputToUTC(parsed.data.startDate),
       mileageLimit: parsed.data.mileageLimit,
+      startingMiles,
+      totalMiles: startingMiles,
     },
   });
 

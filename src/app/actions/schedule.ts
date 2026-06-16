@@ -21,9 +21,33 @@ const eventSchema = z.object({
   title: z.string().trim().min(1, "Title is required").max(120),
   date: z.string().min(1, "Date is required"),
   startTime: optionalText(10),
+  endTime: optionalText(10),
   location: optionalText(200),
   notes: optionalText(1000),
 });
+
+function timeToMinutes(value: string): number | null {
+  const match = value.trim().match(/^(\d{1,2}):(\d{2})$/);
+  if (!match) return null;
+  return Number(match[1]) * 60 + Number(match[2]);
+}
+
+function validateTimes(startTime?: string, endTime?: string): string | null {
+  if (endTime && !startTime) {
+    return "Start time is required when end time is set.";
+  }
+  if (startTime && endTime) {
+    const start = timeToMinutes(startTime);
+    const end = timeToMinutes(endTime);
+    if (start == null || end == null) {
+      return "Enter valid times in HH:MM format.";
+    }
+    if (end <= start) {
+      return "End time must be after start time.";
+    }
+  }
+  return null;
+}
 
 export type ScheduleState = { error?: string; ok?: boolean };
 
@@ -54,6 +78,7 @@ export async function createScheduleEvent(
     title: formData.get("title"),
     date: formData.get("date"),
     startTime: formData.get("startTime"),
+    endTime: formData.get("endTime"),
     location: formData.get("location"),
     notes: formData.get("notes"),
   });
@@ -61,12 +86,16 @@ export async function createScheduleEvent(
     return { error: parsed.error.issues[0]?.message ?? "Invalid event." };
   }
 
+  const timeError = validateTimes(parsed.data.startTime, parsed.data.endTime);
+  if (timeError) return { error: timeError };
+
   await prisma.scheduleEvent.create({
     data: {
       type: parsed.data.type,
       title: parsed.data.title,
       date: dateInputToUTC(parsed.data.date),
       startTime: parsed.data.startTime ?? null,
+      endTime: parsed.data.endTime ?? null,
       location: parsed.data.location ?? null,
       notes: parsed.data.notes ?? null,
       teamId: user.teamId!,
@@ -91,12 +120,16 @@ export async function updateScheduleEvent(
     title: formData.get("title"),
     date: formData.get("date"),
     startTime: formData.get("startTime"),
+    endTime: formData.get("endTime"),
     location: formData.get("location"),
     notes: formData.get("notes"),
   });
   if (!parsed.success || !parsed.data.id) {
     return { error: parsed.error?.issues[0]?.message ?? "Invalid event." };
   }
+
+  const timeError = validateTimes(parsed.data.startTime, parsed.data.endTime);
+  if (timeError) return { error: timeError };
 
   const existing = await prisma.scheduleEvent.findFirst({
     where: { id: parsed.data.id, teamId: user.teamId! },
@@ -110,6 +143,7 @@ export async function updateScheduleEvent(
       title: parsed.data.title,
       date: dateInputToUTC(parsed.data.date),
       startTime: parsed.data.startTime ?? null,
+      endTime: parsed.data.endTime ?? null,
       location: parsed.data.location ?? null,
       notes: parsed.data.notes ?? null,
     },

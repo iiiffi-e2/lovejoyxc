@@ -1,0 +1,2 @@
+-- AlterTable
+ALTER TABLE "Shoe" ADD COLUMN "startingMiles" DOUBLE PRECISION NOT NULL DEFAULT 0;
