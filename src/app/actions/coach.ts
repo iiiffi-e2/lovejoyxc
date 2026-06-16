@@ -10,7 +10,13 @@ const noteSchema = z.object({
   note: z.string().min(1, "Write a note").max(2000),
 });
 
+const emailSchema = z.object({
+  athleteId: z.string().min(1),
+  email: z.string().email("Enter a valid email"),
+});
+
 export type NoteState = { error?: string; ok?: boolean };
+export type EmailState = { error?: string; ok?: boolean };
 
 export async function addCoachNote(
   _prev: NoteState,
@@ -34,6 +40,43 @@ export async function addCoachNote(
   });
 
   revalidatePath(`/coach/athletes/${parsed.data.athleteId}`);
+  return { ok: true };
+}
+
+export async function updateAthleteEmail(
+  _prev: EmailState,
+  formData: FormData,
+): Promise<EmailState> {
+  await requireRole("COACH", "ADMIN");
+  const parsed = emailSchema.safeParse({
+    athleteId: formData.get("athleteId"),
+    email: String(formData.get("email") ?? "").trim().toLowerCase(),
+  });
+  if (!parsed.success) {
+    return { error: parsed.error.issues[0]?.message ?? "Invalid email." };
+  }
+
+  const athlete = await prisma.user.findUnique({
+    where: { id: parsed.data.athleteId },
+  });
+  if (!athlete || athlete.role !== "ATHLETE") {
+    return { error: "Athlete not found." };
+  }
+
+  const existing = await prisma.user.findUnique({
+    where: { email: parsed.data.email },
+  });
+  if (existing && existing.id !== athlete.id) {
+    return { error: "Another account already uses that email." };
+  }
+
+  await prisma.user.update({
+    where: { id: athlete.id },
+    data: { email: parsed.data.email },
+  });
+
+  revalidatePath(`/coach/athletes/${athlete.id}`);
+  revalidatePath("/coach/athletes");
   return { ok: true };
 }
 
