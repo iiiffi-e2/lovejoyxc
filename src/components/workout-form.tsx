@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useActionState, useMemo, useState } from "react";
+import { useActionState, useMemo, useState, type CSSProperties } from "react";
 import { useFormStatus } from "react-dom";
 import { AlertCircle, Check } from "lucide-react";
 import type {
@@ -261,7 +261,12 @@ export function WorkoutForm({
           step={1}
           value={effort}
           onChange={(e) => setEffort(Number(e.target.value))}
-          className="h-2 w-full cursor-pointer appearance-none rounded-full bg-surface accent-brand"
+          className="range-input"
+          style={
+            {
+              "--range-progress": `${((effort - 1) / 9) * 100}%`,
+            } as CSSProperties
+          }
         />
         <div className="mt-1 flex justify-between text-[11px] font-medium text-gray-400">
           <span>Easy</span>

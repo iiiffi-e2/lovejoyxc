@@ -47,6 +47,72 @@ input[type="number"] {
   -moz-appearance: textfield;
 }
 
+/* Styled range inputs — visible track + thumb (appearance-none removes defaults) */
+input[type="range"].range-input {
+  --range-track: var(--color-line);
+  --range-fill: var(--color-brand);
+  --range-progress: 50%;
+  height: 1.25rem;
+  width: 100%;
+  cursor: pointer;
+  appearance: none;
+  background: transparent;
+}
+
+input[type="range"].range-input:focus-visible {
+  outline: none;
+}
+
+input[type="range"].range-input:focus-visible::-webkit-slider-thumb {
+  box-shadow:
+    0 0 0 3px color-mix(in srgb, var(--color-brand) 25%, transparent),
+    0 1px 3px rgb(0 0 0 / 0.15);
+}
+
+input[type="range"].range-input::-webkit-slider-runnable-track {
+  height: 0.625rem;
+  border-radius: 9999px;
+  background: linear-gradient(
+    to right,
+    var(--range-fill) 0%,
+    var(--range-fill) var(--range-progress),
+    var(--range-track) var(--range-progress),
+    var(--range-track) 100%
+  );
+}
+
+input[type="range"].range-input::-webkit-slider-thumb {
+  appearance: none;
+  width: 1.25rem;
+  height: 1.25rem;
+  margin-top: -0.3125rem;
+  border: 2px solid var(--color-paper);
+  border-radius: 9999px;
+  background: var(--range-fill);
+  box-shadow: 0 1px 3px rgb(0 0 0 / 0.15);
+}
+
+input[type="range"].range-input::-moz-range-track {
+  height: 0.625rem;
+  border-radius: 9999px;
+  background: var(--range-track);
+}
+
+input[type="range"].range-input::-moz-range-progress {
+  height: 0.625rem;
+  border-radius: 9999px;
+  background: var(--range-fill);
+}
+
+input[type="range"].range-input::-moz-range-thumb {
+  width: 1.25rem;
+  height: 1.25rem;
+  border: 2px solid var(--color-paper);
+  border-radius: 9999px;
+  background: var(--range-fill);
+  box-shadow: 0 1px 3px rgb(0 0 0 / 0.15);
+}
+
 /* Thin, subtle scrollbars */
 * {
   scrollbar-width: thin;
