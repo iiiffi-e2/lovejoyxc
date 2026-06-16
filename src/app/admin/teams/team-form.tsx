@@ -4,6 +4,7 @@ import { useActionState, useEffect, useRef } from "react";
 import { useFormStatus } from "react-dom";
 import { Plus } from "lucide-react";
 import { createTeam, type AdminState } from "@/app/actions/admin";
+import { GeneratedCodeDisplay } from "@/components/admin/team-signup-controls";
 import { Button } from "@/components/ui/button";
 import { Input, Label } from "@/components/ui/field";
 
@@ -31,6 +32,11 @@ export function TeamForm() {
           <Input id="schoolYear" name="schoolYear" placeholder="2025-2026" required />
         </div>
       </div>
+      <label className="flex items-center gap-2 text-sm font-medium text-ink">
+        <input type="checkbox" name="enableSignup" className="rounded border-line" />
+        Enable athlete signup (generates invite code)
+      </label>
+      {state.generatedCode ? <GeneratedCodeDisplay code={state.generatedCode} /> : null}
       {state.error ? (
         <p className="text-sm font-medium text-injury">{state.error}</p>
       ) : null}

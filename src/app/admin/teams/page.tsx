@@ -4,6 +4,7 @@ import { prisma } from "@/lib/prisma";
 import { PageHeading, SectionTitle } from "@/components/section";
 import { Card } from "@/components/ui/card";
 import { EmptyState } from "@/components/empty-state";
+import { TeamSignupControls } from "@/components/admin/team-signup-controls";
 import { TeamForm } from "./team-form";
 import { formatDate } from "@/lib/format";
 
@@ -45,11 +46,17 @@ export default async function AdminTeamsPage() {
                     </p>
                   </div>
                 </div>
-                <p className="mt-3 border-t border-line pt-3 text-xs text-gray-400">
+                <p className="mt-3 text-xs text-gray-400">
                   {t._count.members}{" "}
                   {t._count.members === 1 ? "member" : "members"} · created{" "}
                   {formatDate(t.createdAt)}
                 </p>
+                <TeamSignupControls
+                  id={t.id}
+                  signupEnabled={t.signupEnabled}
+                  hasCode={!!t.signupCodeHash}
+                  signupCodeRotatedAt={t.signupCodeRotatedAt}
+                />
               </Card>
             ))}
           </div>

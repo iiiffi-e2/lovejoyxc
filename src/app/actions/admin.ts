@@ -6,6 +6,7 @@ import { z } from "zod";
 import type { GenderTeam, TeamGroup } from "@prisma/client";
 import { prisma } from "@/lib/prisma";
 import { requireRole, hashPassword } from "@/lib/auth";
+import { generateInviteCode, hashInviteCode } from "@/lib/invite-code";
 
 const optionalEnum = <T extends [string, ...string[]]>(values: T) =>
   z.preprocess((v) => (v === "" || v == null ? undefined : v), z.enum(values).optional());
@@ -27,7 +28,11 @@ const userSchema = z.object({
   ),
 });
 
-export type AdminState = { error?: string; ok?: boolean };
+export type AdminState = {
+  error?: string;
+  ok?: boolean;
+  generatedCode?: string;
+};
 
 export async function createUser(
   _prev: AdminState,
@@ -164,13 +169,63 @@ export async function createTeam(
     return { error: parsed.error.issues[0]?.message ?? "Invalid form." };
   }
 
+  const enableSignup = formData.get("enableSignup") === "on";
+
+  let team;
   try {
-    await prisma.team.create({ data: parsed.data });
+    team = await prisma.team.create({ data: parsed.data });
   } catch {
     return { error: "A team with that name and school year already exists." };
   }
 
+  let generatedCode: string | undefined;
+  if (enableSignup) {
+    const code = generateInviteCode();
+    generatedCode = code;
+    await prisma.team.update({
+      where: { id: team.id },
+      data: {
+        signupCodeHash: await hashInviteCode(code),
+        signupEnabled: true,
+        signupCodeRotatedAt: new Date(),
+      },
+    });
+  }
+
   revalidatePath("/admin/teams");
   revalidatePath("/admin");
+  return { ok: true, generatedCode };
+}
+
+export async function toggleTeamSignup(teamId: string): Promise<AdminState> {
+  await requireRole("ADMIN");
+  const team = await prisma.team.findUnique({ where: { id: teamId } });
+  if (!team) return { error: "Team not found." };
+  if (!team.signupEnabled && !team.signupCodeHash) {
+    return { error: "Generate an invite code before enabling signup." };
+  }
+  await prisma.team.update({
+    where: { id: teamId },
+    data: { signupEnabled: !team.signupEnabled },
+  });
+  revalidatePath("/admin/teams");
   return { ok: true };
+}
+
+export async function generateTeamSignupCode(teamId: string): Promise<AdminState> {
+  await requireRole("ADMIN");
+  const code = generateInviteCode();
+  await prisma.team.update({
+    where: { id: teamId },
+    data: {
+      signupCodeHash: await hashInviteCode(code),
+      signupCodeRotatedAt: new Date(),
+    },
+  });
+  revalidatePath("/admin/teams");
+  return { ok: true, generatedCode: code };
+}
+
+export async function rotateTeamSignupCode(teamId: string): Promise<AdminState> {
+  return generateTeamSignupCode(teamId);
 }
