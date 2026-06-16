@@ -66,12 +66,16 @@ export default async function AthleteProfilePage({
                 ) : null}
                 {athlete.teamGroup ? (
                   <Badge tone="brand">{TEAM_GROUP_LABEL[athlete.teamGroup]}</Badge>
-                ) : null}
+                ) : (
+                  <Badge tone="neutral">Unassigned</Badge>
+                )}
                 {athlete.genderTeam ? (
                   <Badge tone="neutral">
                     {GENDER_TEAM_LABEL[athlete.genderTeam]}
                   </Badge>
-                ) : null}
+                ) : (
+                  <Badge tone="neutral">Unassigned</Badge>
+                )}
               </div>
             </div>
           </div>

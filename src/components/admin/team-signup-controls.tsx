@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, useTransition } from "react";
+import { useState, useTransition } from "react";
 import { Copy, Check, RefreshCw, KeyRound, ToggleLeft, ToggleRight } from "lucide-react";
 import {
   toggleTeamSignup,
@@ -28,15 +28,8 @@ export function TeamSignupControls({
   const [pending, startTransition] = useTransition();
   const [error, setError] = useState<string | null>(null);
   const [generatedCode, setGeneratedCode] = useState<string | null>(null);
-  const [localEnabled, setLocalEnabled] = useState(signupEnabled);
-  const [localHasCode, setLocalHasCode] = useState(hasCode);
 
-  useEffect(() => {
-    setLocalEnabled(signupEnabled);
-    setLocalHasCode(hasCode);
-  }, [signupEnabled, hasCode]);
-
-  const run = (action: () => Promise<AdminState>, onSuccess?: () => void) => {
+  const run = (action: () => Promise<AdminState>) => {
     setError(null);
     startTransition(async () => {
       const result = await action();
@@ -46,17 +39,15 @@ export function TeamSignupControls({
       }
       if (result.generatedCode) {
         setGeneratedCode(result.generatedCode);
-        setLocalHasCode(true);
       }
-      onSuccess?.();
     });
   };
 
   return (
     <div className="mt-3 space-y-3 border-t border-line pt-3">
       <div className="flex flex-wrap items-center gap-2">
-        <Badge tone={localEnabled ? "success" : "neutral"}>
-          {localEnabled ? "Signup open" : "Signup closed"}
+        <Badge tone={signupEnabled ? "success" : "neutral"}>
+          {signupEnabled ? "Signup open" : "Signup closed"}
         </Badge>
         {signupCodeRotatedAt ? (
           <span className="text-xs text-gray-400">
@@ -77,19 +68,17 @@ export function TeamSignupControls({
           variant="outline"
           size="sm"
           disabled={pending}
-          onClick={() =>
-            run(() => toggleTeamSignup(id), () => setLocalEnabled((e) => !e))
-          }
+          onClick={() => run(() => toggleTeamSignup(id))}
         >
-          {localEnabled ? (
+          {signupEnabled ? (
             <ToggleLeft className="h-4 w-4" />
           ) : (
             <ToggleRight className="h-4 w-4" />
           )}
-          {localEnabled ? "Close signup" : "Open signup"}
+          {signupEnabled ? "Close signup" : "Open signup"}
         </Button>
 
-        {localHasCode ? (
+        {hasCode ? (
           <Button
             type="button"
             variant="outline"

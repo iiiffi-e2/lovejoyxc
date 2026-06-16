@@ -25,14 +25,8 @@ export function AvatarUpload({
   const fileRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
-    if (state.ok) {
-      formRef.current?.reset();
-      if (preview) {
-        URL.revokeObjectURL(preview);
-        setPreview(null);
-      }
-    }
-  }, [state.ok, preview]);
+    if (state.ok) formRef.current?.reset();
+  }, [state.ok]);
 
   useEffect(() => {
     return () => {
@@ -76,7 +70,7 @@ export function AvatarUpload({
 
   return (
     <div className="mt-4 space-y-3 border-t border-line pt-4">
-      {preview ? (
+      {preview && !state.ok ? (
         <div className="flex items-center gap-3">
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img

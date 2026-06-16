@@ -10,6 +10,9 @@ black typography, soft gray cards, rounded corners, and clean charts.
 ## Features
 
 ### Athletes
+- **Self-signup** with a season invite code from your coach or admin (see `/signup`)
+- Profile photo upload (when Vercel Blob is configured)
+- **Forgot password** via email magic link
 - **Log Today's Run** — fast, mobile-first form with smart defaults
 - Auto-calculated pace from distance + duration
 - Emoji feeling selector, effort slider, soreness, surface, pain/injury flag
@@ -31,6 +34,7 @@ black typography, soft gray cards, rounded corners, and clean charts.
 
 ### Admins
 - Create teams / seasons
+- Generate season **invite codes** for athlete self-signup (enable/disable per team)
 - Add athletes and coaches, assign roles
 - Manage groups (Varsity / JV / Freshman, Boys / Girls)
 - Activate / deactivate accounts
@@ -84,6 +88,33 @@ npm run dev
 ```
 
 Open [http://localhost:3000](http://localhost:3000).
+
+## Environment variables
+
+See `.env.example` for the full list. Key variables:
+
+| Variable | Required | Description |
+| -------- | -------- | ----------- |
+| `DATABASE_URL` | Yes | PostgreSQL connection string |
+| `AUTH_SECRET` | Yes | Secret for signing session cookies |
+| `NEXT_PUBLIC_APP_URL` | Prod | Public app URL (used in password-reset links) |
+| `BLOB_READ_WRITE_TOKEN` | Optional | Vercel Blob token for profile photo uploads |
+| `RESEND_API_KEY` | Optional | Resend API key for password-reset emails |
+| `EMAIL_FROM` | Optional | Sender address for transactional email |
+
+When `BLOB_READ_WRITE_TOKEN`, `RESEND_API_KEY`, or `EMAIL_FROM` are unset, avatar
+upload and email features degrade gracefully in local dev (upload disabled; reset
+links logged to the server console).
+
+## Athlete signup
+
+1. An admin creates a team and generates an invite code under **Admin → Teams**
+   (or enables signup when creating a team).
+2. The athlete visits `/signup`, enters the invite code, name, email, password,
+   and grade.
+3. On success they are logged in and redirected to their dashboard.
+
+Invite codes are hashed in the database; admins can rotate codes to invalidate old ones.
 
 ## Demo accounts
 

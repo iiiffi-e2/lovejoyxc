@@ -56,13 +56,23 @@ export default async function CoachAthletesPage({
                       <p className="font-bold text-ink">{r.athlete.name}</p>
                       <p className="text-xs text-gray-400">
                         {r.athlete.grade ? `Grade ${r.athlete.grade}` : "—"}
-                        {r.athlete.teamGroup
-                          ? ` · ${TEAM_GROUP_LABEL[r.athlete.teamGroup]}`
-                          : ""}
-                        {r.athlete.genderTeam
-                          ? ` · ${GENDER_TEAM_LABEL[r.athlete.genderTeam]}`
-                          : ""}
                       </p>
+                      <div className="mt-1 flex flex-wrap gap-1">
+                        {r.athlete.teamGroup ? (
+                          <Badge tone="brand">
+                            {TEAM_GROUP_LABEL[r.athlete.teamGroup]}
+                          </Badge>
+                        ) : (
+                          <Badge tone="neutral">Unassigned</Badge>
+                        )}
+                        {r.athlete.genderTeam ? (
+                          <Badge tone="neutral">
+                            {GENDER_TEAM_LABEL[r.athlete.genderTeam]}
+                          </Badge>
+                        ) : (
+                          <Badge tone="neutral">Unassigned</Badge>
+                        )}
+                      </div>
                     </div>
                   </div>
                   <ChevronRight className="h-4 w-4 shrink-0 text-gray-300" />
