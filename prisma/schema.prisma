@@ -74,15 +74,17 @@ model User {
   genderTeam   GenderTeam?
   teamGroup    TeamGroup?
   active       Boolean     @default(true)
+  avatarUrl    String?
   createdAt    DateTime    @default(now())
   updatedAt    DateTime    @updatedAt
 
   teamId String?
   team   Team?   @relation(fields: [teamId], references: [id])
 
-  workoutLogs    WorkoutLog[]
-  shoes          Shoe[]
-  sessions       Session[]
+  workoutLogs          WorkoutLog[]
+  shoes                Shoe[]
+  sessions             Session[]
+  passwordResetTokens  PasswordResetToken[]
   // Coach notes written by this user (when acting as a coach)
   authoredNotes  CoachNote[]  @relation("CoachNoteAuthor")
   // Coach notes about this user (when acting as an athlete)
@@ -94,12 +96,15 @@ model User {
 }
 
 model Team {
-  id         String   @id @default(cuid())
-  name       String
-  season     String
-  schoolYear String
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime @updatedAt
+  id                  String    @id @default(cuid())
+  name                String
+  season              String
+  schoolYear          String
+  signupCodeHash      String?
+  signupEnabled       Boolean   @default(false)
+  signupCodeRotatedAt DateTime?
+  createdAt           DateTime  @default(now())
+  updatedAt           DateTime  @updatedAt
 
   members     User[]
   workoutLogs WorkoutLog[]
@@ -181,4 +186,17 @@ model Session {
   createdAt DateTime @default(now())
 
   @@index([userId])
+}
+
+model PasswordResetToken {
+  id        String    @id @default(cuid())
+  tokenHash String
+  userId    String
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  expiresAt DateTime
+  usedAt    DateTime?
+  createdAt DateTime  @default(now())
+
+  @@index([userId])
+  @@index([tokenHash])
 }
