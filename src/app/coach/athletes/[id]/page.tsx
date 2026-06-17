@@ -190,7 +190,7 @@ export default async function AthleteProfilePage({
         <div className="space-y-6">
           <div>
             <SectionTitle title="Parent / guardian access" />
-            <ParentAccessSection athleteId={athlete.id} data={parentAccess} />
+            <ParentAccessSection athleteId={athlete.id} data={parentAccess} canRevoke />
           </div>
 
           <div>

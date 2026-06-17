@@ -58,6 +58,24 @@ async function assertCanManageAthleteParentAccess(
   return { athlete };
 }
 
+async function assertCoachCanRevokeParentAccess(
+  user: User,
+  athleteId: string,
+): Promise<{ athlete: { id: string; name: string; teamId: string | null } }> {
+  if (user.role !== "COACH" && user.role !== "ADMIN") {
+    throw new Error("Forbidden");
+  }
+  const athlete = await prisma.user.findFirst({
+    where: { id: athleteId, role: "ATHLETE", active: true },
+    select: { id: true, name: true, teamId: true },
+  });
+  if (!athlete) throw new Error("Athlete not found");
+  if (user.role === "COACH" && user.teamId && athlete.teamId !== user.teamId) {
+    throw new Error("Forbidden");
+  }
+  return { athlete };
+}
+
 export async function inviteParent(
   athleteId: string,
   _prev: ParentActionState,
@@ -110,7 +128,7 @@ export async function revokeParentLink(
 ): Promise<void> {
   const user = await requireUser();
   try {
-    await assertCanManageAthleteParentAccess(user, athleteId);
+    await assertCoachCanRevokeParentAccess(user, athleteId);
   } catch {
     return;
   }
@@ -127,7 +145,7 @@ export async function revokeParentInvite(
 ): Promise<void> {
   const user = await requireUser();
   try {
-    await assertCanManageAthleteParentAccess(user, athleteId);
+    await assertCoachCanRevokeParentAccess(user, athleteId);
   } catch {
     return;
   }
@@ -146,7 +164,7 @@ export async function resendParentInvite(
   const user = await requireUser();
   let athlete: { id: string; name: string; teamId: string | null };
   try {
-    ({ athlete } = await assertCanManageAthleteParentAccess(user, athleteId));
+    ({ athlete } = await assertCoachCanRevokeParentAccess(user, athleteId));
   } catch {
     return;
   }

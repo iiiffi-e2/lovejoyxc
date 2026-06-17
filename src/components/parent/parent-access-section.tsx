@@ -32,9 +32,11 @@ type ParentAccessData = {
 export function ParentAccessSection({
   athleteId,
   data,
+  canRevoke = false,
 }: {
   athleteId: string;
   data: ParentAccessData;
+  canRevoke?: boolean;
 }) {
   const [state, formAction] = useActionState(
     inviteParent.bind(null, athleteId),
@@ -87,11 +89,13 @@ export function ParentAccessSection({
                     Linked {formatDate(link.createdAt)}
                   </p>
                 </div>
-                <form action={revokeParentLink.bind(null, link.id, athleteId)}>
-                  <Button type="submit" variant="outline" size="sm">
-                    Revoke
-                  </Button>
-                </form>
+                {canRevoke ? (
+                  <form action={revokeParentLink.bind(null, link.id, athleteId)}>
+                    <Button type="submit" variant="outline" size="sm">
+                      Revoke
+                    </Button>
+                  </form>
+                ) : null}
               </li>
             ))}
           </ul>
@@ -114,18 +118,20 @@ export function ParentAccessSection({
                     {formatDate(invite.expiresAt)}
                   </p>
                 </div>
-                <div className="flex gap-2">
-                  <form action={resendParentInvite.bind(null, invite.id, athleteId)}>
-                    <Button type="submit" variant="outline" size="sm">
-                      Resend
-                    </Button>
-                  </form>
-                  <form action={revokeParentInvite.bind(null, invite.id, athleteId)}>
-                    <Button type="submit" variant="ghost" size="sm">
-                      Cancel
-                    </Button>
-                  </form>
-                </div>
+                {canRevoke ? (
+                  <div className="flex gap-2">
+                    <form action={resendParentInvite.bind(null, invite.id, athleteId)}>
+                      <Button type="submit" variant="outline" size="sm">
+                        Resend
+                      </Button>
+                    </form>
+                    <form action={revokeParentInvite.bind(null, invite.id, athleteId)}>
+                      <Button type="submit" variant="ghost" size="sm">
+                        Cancel
+                      </Button>
+                    </form>
+                  </div>
+                ) : null}
               </li>
             ))}
           </ul>
