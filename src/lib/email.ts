@@ -1,5 +1,6 @@
 import "server-only";
 import { Resend } from "resend";
+import { buildParentInviteEmail } from "./parent-invite-email";
 
 export async function sendPasswordResetEmail(
   to: string,
@@ -30,11 +31,11 @@ export async function sendParentInviteEmail(
 ): Promise<void> {
   const apiKey = process.env.RESEND_API_KEY;
   const from = process.env.EMAIL_FROM;
-
-  const text =
-    `${inviterName} invited you to view ${athleteName}'s training log on Lovejoy XC Log.\n\n` +
-    `Accept the invite (expires in 7 days):\n\n${acceptUrl}\n\n` +
-    `If you weren't expecting this, you can ignore this email.`;
+  const { html, text } = buildParentInviteEmail({
+    acceptUrl,
+    athleteName,
+    inviterName,
+  });
 
   if (!apiKey || !from) {
     console.log(`[dev] Parent invite link for ${to}: ${acceptUrl}`);
@@ -47,5 +48,6 @@ export async function sendParentInviteEmail(
     to,
     subject: `View ${athleteName}'s training log — Lovejoy XC`,
     text,
+    html,
   });
 }
