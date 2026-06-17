@@ -53,7 +53,18 @@ export async function validateParentInviteToken(raw: string) {
       expiresAt: { gt: new Date() },
     },
     include: {
-      athlete: { select: { id: true, name: true, active: true } },
+      athlete: {
+        select: {
+          id: true,
+          name: true,
+          active: true,
+          avatarUrl: true,
+          grade: true,
+          genderTeam: true,
+          teamGroup: true,
+          team: { select: { name: true, season: true } },
+        },
+      },
       invitedBy: { select: { name: true } },
     },
   });
