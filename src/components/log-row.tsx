@@ -20,7 +20,7 @@ export type LogRowData = Pick<
   | "notes"
 > & {
   shoe?: { name: string } | null;
-  athlete?: { name: string } | null;
+  athlete?: { id?: string; name: string } | null;
 };
 
 export function LogRow({
@@ -107,7 +107,7 @@ export function LogList({
   showAthlete,
 }: {
   logs: LogRowData[];
-  hrefForLog?: (log: LogRowData) => string;
+  hrefForLog?: (log: LogRowData) => string | undefined;
   showAthlete?: boolean;
 }) {
   return (

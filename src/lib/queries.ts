@@ -101,6 +101,44 @@ export async function getAthleteShoes(athleteId: string) {
   });
 }
 
+export type TeamLogFilters = {
+  athleteId?: string;
+  workoutType?: string;
+  from?: Date;
+};
+
+export async function getTeamAthletes(teamId: string) {
+  return prisma.user.findMany({
+    where: { teamId, role: "ATHLETE", active: true },
+    select: { id: true, name: true, grade: true, teamGroup: true },
+    orderBy: { name: "asc" },
+  });
+}
+
+export async function getTeamLogs(
+  teamId: string,
+  filters: TeamLogFilters = {},
+  take = 100,
+) {
+  const where: Prisma.WorkoutLogWhereInput = {
+    teamId,
+    athlete: { role: "ATHLETE", active: true, teamId },
+  };
+  if (filters.athleteId) where.athleteId = filters.athleteId;
+  if (filters.workoutType) where.workoutType = filters.workoutType as never;
+  if (filters.from) where.date = { gte: filters.from };
+
+  return prisma.workoutLog.findMany({
+    where,
+    orderBy: [{ date: "desc" }, { createdAt: "desc" }],
+    take,
+    include: {
+      athlete: { select: { id: true, name: true } },
+      shoe: { select: { name: true } },
+    },
+  });
+}
+
 /** Recompute a shoe's total mileage from starting miles plus logged runs. */
 export async function recomputeShoeMiles(shoeId: string) {
   const shoe = await prisma.shoe.findUnique({

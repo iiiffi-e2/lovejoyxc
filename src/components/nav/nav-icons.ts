@@ -22,6 +22,7 @@ export const NAV_ICONS: Record<NavIconKey, LucideIcon> = {
   schedule: CalendarDays,
   log: CalendarPlus,
   history: History,
+  team: Users,
   shoes: Footprints,
   profile: User,
   athletes: Users,

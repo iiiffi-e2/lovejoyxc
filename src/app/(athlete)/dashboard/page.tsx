@@ -7,9 +7,10 @@ import {
   CalendarRange,
   CalendarDays,
   ClipboardList,
+  Users,
 } from "lucide-react";
 import { requireRole } from "@/lib/auth";
-import { getAthleteDashboard, getThisWeekSchedule } from "@/lib/queries";
+import { getAthleteDashboard, getTeamLogs, getThisWeekSchedule } from "@/lib/queries";
 import { ScheduleEventCard } from "@/components/schedule/schedule-event-card";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -23,12 +24,16 @@ import { WorkoutTypeBadge } from "@/components/domain-badges";
 import { formatMiles, formatPace, formatPercent, relativeDays } from "@/lib/format";
 import { changePercent } from "@/lib/metrics";
 import { RUNNING_TYPES } from "@/lib/labels";
+import { startOfWeek } from "@/lib/dates";
 
 export default async function AthleteDashboard() {
   const user = await requireRole("ATHLETE");
   const data = await getAthleteDashboard(user.id);
   const weekEvents = user.teamId
     ? await getThisWeekSchedule(user.teamId)
+    : [];
+  const teamLogs = user.teamId
+    ? await getTeamLogs(user.teamId, { from: startOfWeek(new Date()) }, 8)
     : [];
   const change = changePercent(data.thisWeekMiles, data.lastWeekMiles);
 
@@ -186,6 +191,30 @@ export default async function AthleteDashboard() {
           />
         )}
       </div>
+
+      {user.teamId ? (
+        <div>
+          <SectionTitle
+            title="Team activity"
+            action={{ label: "See all", href: "/team" }}
+          />
+          {teamLogs.length > 0 ? (
+            <LogList
+              logs={teamLogs}
+              showAthlete
+              hrefForLog={(l) =>
+                l.athlete?.id === user.id ? `/log/${l.id}` : undefined
+              }
+            />
+          ) : (
+            <EmptyState
+              icon={Users}
+              title="No team logs this week"
+              description="When teammates log their runs, they'll show up here."
+            />
+          )}
+        </div>
+      ) : null}
     </div>
   );
 }

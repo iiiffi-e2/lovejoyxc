@@ -3,6 +3,7 @@ export type NavIconKey =
   | "schedule"
   | "log"
   | "history"
+  | "team"
   | "shoes"
   | "profile"
   | "athletes"
@@ -23,6 +24,7 @@ export const athleteNav: NavItem[] = [
   { href: "/dashboard", label: "Dashboard", icon: "dashboard" },
   { href: "/schedule", label: "Schedule", icon: "schedule" },
   { href: "/log", label: "Log Run", icon: "log" },
+  { href: "/team", label: "Team", icon: "team" },
   { href: "/history", label: "History", icon: "history" },
   { href: "/shoes", label: "Shoes", icon: "shoes" },
   { href: "/profile", label: "Profile", icon: "profile" },
