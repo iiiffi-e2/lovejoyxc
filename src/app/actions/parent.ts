@@ -19,6 +19,7 @@ import {
   validateParentInviteToken,
 } from "@/lib/parent-invite";
 import { checkRateLimit, getClientIp } from "@/lib/rate-limit";
+import { persistParentChildSelection } from "@/lib/parent-access";
 
 export type ParentActionState = { error?: string; ok?: boolean; message?: string };
 
@@ -222,6 +223,7 @@ export async function signupAndAcceptParentInvite(
 
   await linkParentToAthlete(parent.id, record.athleteId, record.invitedById);
   await createSession(parent.id);
+  await persistParentChildSelection(record.athleteId);
   redirect(`/parent/dashboard?child=${record.athleteId}`);
 }
 
@@ -253,6 +255,7 @@ export async function loginAndAcceptParentInvite(
 
   await linkParentToAthlete(user.id, record.athleteId, record.invitedById);
   await createSession(user.id);
+  await persistParentChildSelection(record.athleteId);
   redirect(`/parent/dashboard?child=${record.athleteId}`);
 }
 
@@ -267,6 +270,7 @@ export async function acceptParentInviteWhileLoggedIn(token: string): Promise<vo
   if (!consumed) redirect("/parent/profile");
 
   await linkParentToAthlete(user.id, record.athleteId, record.invitedById);
+  await persistParentChildSelection(record.athleteId);
   redirect(`/parent/dashboard?child=${record.athleteId}`);
 }
 

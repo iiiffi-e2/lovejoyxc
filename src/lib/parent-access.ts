@@ -56,7 +56,6 @@ export async function resolveParentChildId(
   if (linked.length === 0) return null;
 
   if (queryChildId && linked.some((a) => a.id === queryChildId)) {
-    await persistParentChildSelection(queryChildId);
     return queryChildId;
   }
 
@@ -66,9 +65,7 @@ export async function resolveParentChildId(
     return cookieChild;
   }
 
-  const first = linked[0]!.id;
-  await persistParentChildSelection(first);
-  return first;
+  return linked[0]!.id;
 }
 
 export async function persistParentChildSelection(childId: string) {

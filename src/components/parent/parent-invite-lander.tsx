@@ -2,7 +2,6 @@ import {
   CalendarDays,
   ClipboardList,
   Footprints,
-  ShieldCheck,
 } from "lucide-react";
 import { Logo } from "@/components/logo";
 import { UserAvatar } from "@/components/user-avatar";
@@ -109,14 +108,6 @@ export function ParentInviteLander({
                 </li>
               ))}
             </ul>
-
-            <div className="flex items-start gap-2 rounded-xl bg-surface px-3 py-2.5 text-xs text-gray-500">
-              <ShieldCheck className="mt-0.5 h-4 w-4 shrink-0 text-brand" />
-              <span>
-                Coach notes and other athletes&rsquo; logs stay private. This
-                invite is only for {firstName}&rsquo;s data.
-              </span>
-            </div>
           </div>
         </div>
 
