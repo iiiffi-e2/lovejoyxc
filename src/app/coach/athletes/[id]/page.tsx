@@ -2,7 +2,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ArrowLeft, HeartPulse } from "lucide-react";
 import { requireRole } from "@/lib/auth";
-import { getAthleteProfileForCoach } from "@/lib/queries";
+import { getAthleteProfileForCoach, getParentAccessData } from "@/lib/queries";
 import { SectionTitle } from "@/components/section";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -15,6 +15,7 @@ import { EmptyState } from "@/components/empty-state";
 import { UserAvatar } from "@/components/user-avatar";
 import { AthleteEmailEdit } from "@/components/coach/athlete-email-edit";
 import { CoachNotes } from "./coach-notes";
+import { ParentAccessSection } from "@/components/parent/parent-access-section";
 import { FeelingChip } from "@/components/domain-badges";
 import { formatMiles, formatDate, formatPercent } from "@/lib/format";
 import { changePercent } from "@/lib/metrics";
@@ -31,7 +32,10 @@ export default async function AthleteProfilePage({
 }) {
   await requireRole("COACH", "ADMIN");
   const { id } = await params;
-  const data = await getAthleteProfileForCoach(id);
+  const [data, parentAccess] = await Promise.all([
+    getAthleteProfileForCoach(id),
+    getParentAccessData(id),
+  ]);
   if (!data) notFound();
 
   const { athlete } = data;
@@ -184,6 +188,11 @@ export default async function AthleteProfilePage({
         </div>
 
         <div className="space-y-6">
+          <div>
+            <SectionTitle title="Parent / guardian access" />
+            <ParentAccessSection athleteId={athlete.id} data={parentAccess} />
+          </div>
+
           <div>
             <SectionTitle title="Private coach notes" />
             <Card className="p-4">

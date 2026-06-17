@@ -28,6 +28,14 @@ export const athleteNav: NavItem[] = [
   { href: "/profile", label: "Profile", icon: "profile" },
 ];
 
+export const parentNav: NavItem[] = [
+  { href: "/parent/dashboard", label: "Dashboard", icon: "dashboard" },
+  { href: "/parent/history", label: "History", icon: "history" },
+  { href: "/parent/schedule", label: "Schedule", icon: "schedule" },
+  { href: "/parent/shoes", label: "Shoes", icon: "shoes" },
+  { href: "/parent/profile", label: "Profile", icon: "profile" },
+];
+
 export const coachNav: NavItem[] = [
   { href: "/coach", label: "Dashboard", icon: "dashboard" },
   { href: "/coach/schedule", label: "Schedule", icon: "schedule" },

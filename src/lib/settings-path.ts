@@ -6,6 +6,8 @@ export function settingsPath(role: Role | string): string {
       return "/admin/settings";
     case "COACH":
       return "/coach/settings";
+    case "PARENT":
+      return "/parent/profile";
     default:
       return "/profile";
   }

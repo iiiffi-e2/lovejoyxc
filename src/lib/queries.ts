@@ -552,3 +552,25 @@ export async function getScheduleEvent(id: string, teamId: string) {
     where: { id, teamId },
   });
 }
+
+export async function getParentAccessData(athleteId: string) {
+  const [links, pendingInvites] = await Promise.all([
+    prisma.parentAthleteLink.findMany({
+      where: { athleteId },
+      include: {
+        parent: { select: { id: true, name: true, email: true } },
+      },
+      orderBy: { createdAt: "desc" },
+    }),
+    prisma.parentInviteToken.findMany({
+      where: {
+        athleteId,
+        acceptedAt: null,
+        revokedAt: null,
+        expiresAt: { gt: new Date() },
+      },
+      orderBy: { createdAt: "desc" },
+    }),
+  ]);
+  return { links, pendingInvites };
+}

@@ -80,6 +80,8 @@ export function roleHome(role: Role): string {
       return "/coach";
     case "ADMIN":
       return "/admin";
+    case "PARENT":
+      return "/parent";
     default:
       return "/dashboard";
   }

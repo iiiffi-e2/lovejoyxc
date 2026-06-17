@@ -15,11 +15,13 @@ import {
   RUNNING_TYPES,
   TEAM_GROUP_LABEL,
 } from "@/lib/labels";
+import { getParentAccessData } from "@/lib/queries";
+import { ParentAccessSection } from "@/components/parent/parent-access-section";
 
 export default async function ProfilePage() {
   const user = await requireRole("ATHLETE");
 
-  const [logs, team] = await Promise.all([
+  const [logs, team, parentAccess] = await Promise.all([
     prisma.workoutLog.findMany({
       where: { athleteId: user.id },
       select: { distance: true, paceSec: true, workoutType: true },
@@ -27,6 +29,7 @@ export default async function ProfilePage() {
     user.teamId
       ? prisma.team.findUnique({ where: { id: user.teamId } })
       : Promise.resolve(null),
+    getParentAccessData(user.id),
   ]);
 
   const runs = logs.filter((l) => RUNNING_TYPES.includes(l.workoutType));
@@ -120,6 +123,11 @@ export default async function ProfilePage() {
           your coach — they keep the roster up to date.
         </p>
       </Card>
+
+      <div>
+        <SectionTitle title="Parent / guardian access" />
+        <ParentAccessSection athleteId={user.id} data={parentAccess} />
+      </div>
     </div>
   );
 }

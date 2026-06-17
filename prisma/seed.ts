@@ -402,6 +402,30 @@ async function main() {
     notes: await prisma.coachNote.count(),
   };
   console.log("Seed complete:", counts);
+
+  const firstAthlete = await prisma.user.findFirst({
+    where: { role: "ATHLETE", email: "ethan@lovejoyxc.app" },
+  });
+  if (firstAthlete) {
+    const parent = await prisma.user.upsert({
+      where: { email: "parent@example.com" },
+      update: {},
+      create: {
+        name: "Sample Parent",
+        email: "parent@example.com",
+        passwordHash: await bcrypt.hash("password123", 10),
+        role: "PARENT",
+        active: true,
+      },
+    });
+    await prisma.parentAthleteLink.upsert({
+      where: {
+        parentId_athleteId: { parentId: parent.id, athleteId: firstAthlete.id },
+      },
+      update: {},
+      create: { parentId: parent.id, athleteId: firstAthlete.id },
+    });
+  }
 }
 
 main()

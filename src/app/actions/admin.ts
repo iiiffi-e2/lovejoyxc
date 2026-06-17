@@ -15,7 +15,7 @@ const userSchema = z.object({
   name: z.string().min(1, "Name is required").max(120),
   email: z.string().email("Enter a valid email"),
   password: z.string().min(6, "Password must be at least 6 characters").optional(),
-  role: z.enum(["ATHLETE", "COACH", "ADMIN"]),
+  role: z.enum(["ATHLETE", "COACH", "ADMIN", "PARENT"]),
   grade: z.preprocess(
     (v) => (v === "" || v == null ? undefined : Number(v)),
     z.number().int().min(7).max(12).optional(),

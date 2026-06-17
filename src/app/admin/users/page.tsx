@@ -19,6 +19,7 @@ const ROLE_TONE = {
   ATHLETE: "neutral",
   COACH: "brand",
   ADMIN: "ink",
+  PARENT: "neutral",
 } as const;
 
 export default async function AdminUsersPage() {

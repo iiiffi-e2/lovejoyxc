@@ -15,6 +15,7 @@ enum Role {
   ATHLETE
   COACH
   ADMIN
+  PARENT
 }
 
 enum GenderTeam {
@@ -97,6 +98,12 @@ model User {
   // Coach notes about this user (when acting as an athlete)
   receivedNotes  CoachNote[]  @relation("CoachNoteAthlete")
   createdScheduleEvents ScheduleEvent[]
+
+  parentLinks              ParentAthleteLink[] @relation("ParentLinks")
+  athleteParentLinks       ParentAthleteLink[] @relation("AthleteParentLinks")
+  parentInvitesSent        ParentAthleteLink[] @relation("ParentInvitesSent")
+  parentInvitesAsAthlete   ParentInviteToken[] @relation("ParentInviteAthlete")
+  parentInvitesCreated     ParentInviteToken[] @relation("ParentInviteSender")
 
   @@index([role])
   @@index([teamId])
@@ -187,6 +194,38 @@ model CoachNote {
 
   @@index([athleteId, createdAt])
 }
+model ParentAthleteLink {
+  id          String   @id @default(cuid())
+  parentId    String
+  parent      User     @relation("ParentLinks", fields: [parentId], references: [id], onDelete: Cascade)
+  athleteId   String
+  athlete     User     @relation("AthleteParentLinks", fields: [athleteId], references: [id], onDelete: Cascade)
+  invitedById String?
+  invitedBy   User?    @relation("ParentInvitesSent", fields: [invitedById], references: [id], onDelete: SetNull)
+  createdAt   DateTime @default(now())
+
+  @@unique([parentId, athleteId])
+  @@index([athleteId])
+  @@index([parentId])
+}
+
+model ParentInviteToken {
+  id          String    @id @default(cuid())
+  tokenHash   String
+  athleteId   String
+  athlete     User      @relation("ParentInviteAthlete", fields: [athleteId], references: [id], onDelete: Cascade)
+  email       String
+  invitedById String
+  invitedBy   User      @relation("ParentInviteSender", fields: [invitedById], references: [id], onDelete: Cascade)
+  expiresAt   DateTime
+  acceptedAt  DateTime?
+  revokedAt   DateTime?
+  createdAt   DateTime  @default(now())
+
+  @@index([tokenHash])
+  @@index([athleteId, email])
+}
+
 
 model ScheduleEvent {
   id          String            @id @default(cuid())

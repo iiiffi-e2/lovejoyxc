@@ -83,6 +83,7 @@ export const ROLE_LABEL: Record<Role, string> = {
   ATHLETE: "Athlete",
   COACH: "Coach",
   ADMIN: "Admin",
+  PARENT: "Parent",
 };
 
 export const TEAM_GROUP_LABEL: Record<TeamGroup, string> = {
