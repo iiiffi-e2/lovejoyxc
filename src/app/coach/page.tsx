@@ -18,10 +18,10 @@ import { Badge } from "@/components/ui/badge";
 import { AlertCard } from "@/components/alert-card";
 import { MileageBarChart } from "@/components/charts/mileage-bar-chart";
 import { Table, TableWrap, Td, Th, Tr } from "@/components/ui/table";
-import { FeelingChip } from "@/components/domain-badges";
+import { FeelingChip, WorkoutTypeBadge } from "@/components/domain-badges";
 import { EmptyState } from "@/components/empty-state";
-import { formatMiles, formatPercent, relativeDays } from "@/lib/format";
-import { scoreToFeeling } from "@/lib/labels";
+import { formatDuration, formatMiles, formatPace, formatPercent, relativeDays } from "@/lib/format";
+import { RUNNING_TYPES, scoreToFeeling } from "@/lib/labels";
 
 export default async function CoachDashboard() {
   await requireRole("COACH", "ADMIN");
@@ -48,6 +48,10 @@ export default async function CoachDashboard() {
                 <Tr className="border-t-0">
                   <Th>Athlete</Th>
                   <Th>Last logged</Th>
+                  <Th>Type</Th>
+                  <Th className="text-right">Dist</Th>
+                  <Th className="text-right">Pace</Th>
+                  <Th>Notes</Th>
                   <Th className="text-right">This wk</Th>
                   <Th className="text-right">Last wk</Th>
                   <Th className="text-right">Change</Th>
@@ -68,6 +72,30 @@ export default async function CoachDashboard() {
                       </Link>
                     </Td>
                     <Td className="text-gray-500">{relativeDays(r.lastLogged)}</Td>
+                    <Td>
+                      {r.latestWorkout ? (
+                        <WorkoutTypeBadge type={r.latestWorkout.workoutType} />
+                      ) : (
+                        <span className="text-gray-300">—</span>
+                      )}
+                    </Td>
+                    <Td className="text-right font-semibold text-ink">
+                      {r.latestWorkout &&
+                      RUNNING_TYPES.includes(r.latestWorkout.workoutType) &&
+                      r.latestWorkout.distance > 0
+                        ? `${formatMiles(r.latestWorkout.distance)} mi`
+                        : r.latestWorkout?.durationSec
+                          ? formatDuration(r.latestWorkout.durationSec)
+                          : "—"}
+                    </Td>
+                    <Td className="text-right text-gray-500">
+                      {r.latestWorkout?.paceSec
+                        ? formatPace(r.latestWorkout.paceSec)
+                        : "—"}
+                    </Td>
+                    <Td className="max-w-[180px] truncate text-gray-500">
+                      {r.latestWorkout?.notes ?? "—"}
+                    </Td>
                     <Td className="text-right font-semibold text-ink">
                       {formatMiles(r.thisWeekMiles)}
                     </Td>

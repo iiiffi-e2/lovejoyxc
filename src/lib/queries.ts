@@ -220,6 +220,28 @@ export async function getTeamStatusRows(filters: CoachFilters = {}) {
     lastLogs.map((l) => [l.athleteId, l._max.date as Date | null]),
   );
 
+  const latestWorkoutLogs = await prisma.workoutLog.findMany({
+    where: { athleteId: { in: athletes.map((a) => a.id) } },
+    orderBy: [{ date: "desc" }, { createdAt: "desc" }],
+    distinct: ["athleteId"],
+    select: {
+      id: true,
+      athleteId: true,
+      date: true,
+      workoutType: true,
+      distance: true,
+      durationSec: true,
+      paceSec: true,
+      effort: true,
+      feeling: true,
+      notes: true,
+      painFlag: true,
+    },
+  });
+  const latestWorkoutMap = new Map(
+    latestWorkoutLogs.map((l) => [l.athleteId, l]),
+  );
+
   const thisWeek = weekRange(0);
   const lastWeek = weekRange(-1);
   const today = startOfUTCDay(new Date()).getTime();
@@ -256,6 +278,7 @@ export async function getTeamStatusRows(filters: CoachFilters = {}) {
     return {
       athlete: a,
       lastLogged,
+      latestWorkout: latestWorkoutMap.get(a.id) ?? null,
       daysSince,
       thisWeekMiles,
       lastWeekMiles,
