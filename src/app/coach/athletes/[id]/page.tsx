@@ -13,7 +13,6 @@ import { MileageBarChart } from "@/components/charts/mileage-bar-chart";
 import { TrendLineChart } from "@/components/charts/trend-line-chart";
 import { EmptyState } from "@/components/empty-state";
 import { UserAvatar } from "@/components/user-avatar";
-import { AthleteEmailEdit } from "@/components/coach/athlete-email-edit";
 import { CoachNotes } from "./coach-notes";
 import { ParentAccessSection } from "@/components/parent/parent-access-section";
 import { FeelingChip } from "@/components/domain-badges";
@@ -63,7 +62,7 @@ export default async function AthleteProfilePage({
               <h1 className="text-2xl font-extrabold tracking-tight text-ink">
                 {athlete.name}
               </h1>
-              <AthleteEmailEdit athleteId={athlete.id} email={athlete.email} />
+              <p className="mt-1 text-sm text-gray-500">{athlete.email}</p>
               <div className="mt-2 flex flex-wrap gap-1.5">
                 {athlete.grade ? (
                   <Badge tone="ink">Grade {athlete.grade}</Badge>
