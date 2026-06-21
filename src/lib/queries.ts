@@ -296,23 +296,6 @@ export async function getCoachDashboard(filters: CoachFilters = {}) {
     (s) => s.mileageLimit > 0 && s.totalMiles / s.mileageLimit >= SHOE_WARN_THRESHOLD,
   );
 
-  // Recent team logs
-  const recentLogs = await prisma.workoutLog.findMany({
-    where: {
-      athlete: { role: "ATHLETE", active: true },
-      ...(filters.athleteId ? { athleteId: filters.athleteId } : {}),
-      ...(filters.workoutType
-        ? { workoutType: filters.workoutType as never }
-        : {}),
-    },
-    orderBy: [{ date: "desc" }, { createdAt: "desc" }],
-    take: 12,
-    include: {
-      athlete: { select: { id: true, name: true } },
-      shoe: { select: { name: true } },
-    },
-  });
-
   // 8-week team mileage trend
   const since = addDays(thisWeek.start, -7 * 7);
   const teamLogs = await prisma.workoutLog.findMany({
@@ -342,7 +325,6 @@ export async function getCoachDashboard(filters: CoachFilters = {}) {
     spikes,
     avgWeekly,
     shoeWarnings,
-    recentLogs,
     trend,
   };
 }
