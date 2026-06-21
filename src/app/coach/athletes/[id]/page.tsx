@@ -151,13 +151,6 @@ export default async function AthleteProfilePage({
           </div>
 
           <div>
-            <SectionTitle title="Private coach notes" />
-            <Card className="p-4">
-              <CoachNotes athleteId={athlete.id} notes={data.notes} />
-            </Card>
-          </div>
-
-          <div>
             <SectionTitle title="Injury & pain history" />
             {data.painHistory.length > 0 ? (
               <div className="divide-y divide-line overflow-hidden rounded-2xl border border-line bg-white">
@@ -190,6 +183,13 @@ export default async function AthleteProfilePage({
                 </p>
               </Card>
             )}
+          </div>
+
+          <div>
+            <SectionTitle title="Private coach notes" />
+            <Card className="p-4">
+              <CoachNotes athleteId={athlete.id} notes={data.notes} />
+            </Card>
           </div>
         </div>
 
