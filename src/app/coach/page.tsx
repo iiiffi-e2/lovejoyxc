@@ -18,9 +18,9 @@ import { Badge } from "@/components/ui/badge";
 import { AlertCard } from "@/components/alert-card";
 import { MileageBarChart } from "@/components/charts/mileage-bar-chart";
 import { Table, TableWrap, Td, Th, Tr } from "@/components/ui/table";
-import { FeelingChip, WorkoutTypeBadge } from "@/components/domain-badges";
+import { FeelingChip } from "@/components/domain-badges";
 import { EmptyState } from "@/components/empty-state";
-import { formatMiles, formatPace, formatPercent, relativeDays } from "@/lib/format";
+import { formatMiles, formatPercent, relativeDays } from "@/lib/format";
 import { scoreToFeeling } from "@/lib/labels";
 
 export default async function CoachDashboard() {
@@ -30,76 +30,12 @@ export default async function CoachDashboard() {
   return (
     <div className="space-y-7 animate-fade-in">
       <PageHeading
-        title="Team training snapshot"
-        description="The team's training health at a glance."
+        title="Athletes & logs"
+        description="Who's logging, how they're training, and what needs attention."
       />
-
-      <div className="grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-4">
-        <StatCard
-          label="Team miles · this week"
-          value={formatMiles(data.teamMilesThisWeek)}
-          unit="mi"
-          icon={TrendingUp}
-        />
-        <StatCard
-          label="Logged today"
-          value={`${data.loggedToday}/${data.athleteCount}`}
-          tone="ink"
-          icon={CalendarCheck}
-        />
-        <StatCard
-          label="Missing logs"
-          value={data.missing.length}
-          tone={data.missing.length > 0 ? "warning" : "ink"}
-          icon={Users}
-        />
-        <StatCard
-          label="Injury / pain flags"
-          value={data.injuries.length}
-          tone={data.injuries.length > 0 ? "injury" : "ink"}
-          icon={HeartPulse}
-        />
-        <StatCard
-          label="Avg weekly mileage"
-          value={formatMiles(data.avgWeekly)}
-          unit="mi"
-          tone="ink"
-          icon={Gauge}
-        />
-        <StatCard
-          label="Mileage spikes"
-          value={data.spikes.length}
-          tone={data.spikes.length > 0 ? "warning" : "ink"}
-          icon={Activity}
-        />
-        <StatCard
-          label="Shoe warnings"
-          value={data.shoeWarnings.length}
-          tone={data.shoeWarnings.length > 0 ? "warning" : "ink"}
-          icon={Footprints}
-        />
-        <StatCard
-          label="Active athletes"
-          value={data.athleteCount}
-          tone="brand"
-          icon={Users}
-        />
-      </div>
 
       <CoachAlerts data={data} />
 
-      <div className="grid gap-6 lg:grid-cols-5">
-        <div className="lg:col-span-5">
-          <SectionTitle title="Team mileage (8 weeks)" />
-          <Card>
-            <CardContent>
-              <MileageBarChart data={data.trend} />
-            </CardContent>
-          </Card>
-        </div>
-      </div>
-
-      {/* Athlete Log Status */}
       <div>
         <SectionTitle
           title="Athlete log status"
@@ -187,63 +123,68 @@ export default async function CoachDashboard() {
         )}
       </div>
 
-      {/* Recent Workout Logs */}
-      <div>
-        <SectionTitle
-          title="Recent workout logs"
-          action={{ label: "All logs", href: "/coach/logs" }}
-        />
-        <TableWrap>
-          <Table>
-            <thead>
-              <Tr className="border-t-0">
-                <Th>Date</Th>
-                <Th>Athlete</Th>
-                <Th>Type</Th>
-                <Th className="text-right">Dist</Th>
-                <Th className="text-right">Pace</Th>
-                <Th className="text-right">Effort</Th>
-                <Th>Feeling</Th>
-                <Th>Notes</Th>
-              </Tr>
-            </thead>
-            <tbody>
-              {data.recentLogs.map((l) => (
-                <Tr key={l.id} className="hover:bg-surface">
-                  <Td className="whitespace-nowrap text-gray-500">
-                    {relativeDays(l.date)}
-                  </Td>
-                  <Td className="font-semibold text-ink">
-                    <Link
-                      href={`/coach/athletes/${l.athlete.id}`}
-                      className="hover:text-brand"
-                    >
-                      {l.athlete.name}
-                    </Link>
-                  </Td>
-                  <Td>
-                    <WorkoutTypeBadge type={l.workoutType} />
-                  </Td>
-                  <Td className="text-right font-semibold text-ink">
-                    {l.distance > 0 ? `${formatMiles(l.distance)} mi` : "—"}
-                  </Td>
-                  <Td className="text-right text-gray-500">
-                    {formatPace(l.paceSec)}
-                  </Td>
-                  <Td className="text-right text-gray-500">
-                    {l.effort ? `${l.effort}/10` : "—"}
-                  </Td>
-                  <Td>
-                    <FeelingChip feeling={l.feeling} withLabel={false} />
-                  </Td>
-                  <Td className="max-w-[220px] truncate text-gray-500">
-                    {l.notes ?? "—"}
-                  </Td>
-                </Tr>
-              ))}
-            </tbody>
-          </Table>
-        </TableWrap>
+      <div className="space-y-6">
+        <SectionTitle title="Team snapshot" />
+        <div className="grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-4">
+          <StatCard
+            label="Team miles · this week"
+            value={formatMiles(data.teamMilesThisWeek)}
+            unit="mi"
+            icon={TrendingUp}
+          />
+          <StatCard
+            label="Logged today"
+            value={`${data.loggedToday}/${data.athleteCount}`}
+            tone="ink"
+            icon={CalendarCheck}
+          />
+          <StatCard
+            label="Missing logs"
+            value={data.missing.length}
+            tone={data.missing.length > 0 ? "warning" : "ink"}
+            icon={Users}
+          />
+          <StatCard
+            label="Injury / pain flags"
+            value={data.injuries.length}
+            tone={data.injuries.length > 0 ? "injury" : "ink"}
+            icon={HeartPulse}
+          />
+          <StatCard
+            label="Avg weekly mileage"
+            value={formatMiles(data.avgWeekly)}
+            unit="mi"
+            tone="ink"
+            icon={Gauge}
+          />
+          <StatCard
+            label="Mileage spikes"
+            value={data.spikes.length}
+            tone={data.spikes.length > 0 ? "warning" : "ink"}
+            icon={Activity}
+          />
+          <StatCard
+            label="Shoe warnings"
+            value={data.shoeWarnings.length}
+            tone={data.shoeWarnings.length > 0 ? "warning" : "ink"}
+            icon={Footprints}
+          />
+          <StatCard
+            label="Active athletes"
+            value={data.athleteCount}
+            tone="brand"
+            icon={Users}
+          />
+        </div>
+
+        <div>
+          <SectionTitle title="Team mileage (8 weeks)" />
+          <Card>
+            <CardContent>
+              <MileageBarChart data={data.trend} />
+            </CardContent>
+          </Card>
+        </div>
       </div>
     </div>
   );
@@ -324,5 +265,5 @@ function CoachAlerts({
     );
   }
 
-  return <div className="grid gap-3 sm:grid-cols-2">{alerts}</div>;
+  return <div className="flex flex-col gap-3">{alerts}</div>;
 }
