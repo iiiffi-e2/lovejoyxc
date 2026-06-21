@@ -20,7 +20,7 @@ import { MileageBarChart } from "@/components/charts/mileage-bar-chart";
 import { Table, TableWrap, Td, Th, Tr } from "@/components/ui/table";
 import { FeelingChip, WorkoutTypeBadge } from "@/components/domain-badges";
 import { EmptyState } from "@/components/empty-state";
-import { formatDuration, formatMiles, formatPace, formatPercent, relativeDays } from "@/lib/format";
+import { formatDuration, formatMiles, formatPace, relativeDays } from "@/lib/format";
 import { RUNNING_TYPES, scoreToFeeling } from "@/lib/labels";
 
 export default async function CoachDashboard() {
@@ -51,10 +51,6 @@ export default async function CoachDashboard() {
                   <Th>Type</Th>
                   <Th className="text-right">Dist</Th>
                   <Th className="text-right">Pace</Th>
-                  <Th>Notes</Th>
-                  <Th className="text-right">This wk</Th>
-                  <Th className="text-right">Last wk</Th>
-                  <Th className="text-right">Change</Th>
                   <Th>Feeling</Th>
                   <Th>Injury</Th>
                   <Th>Status</Th>
@@ -92,32 +88,6 @@ export default async function CoachDashboard() {
                       {r.latestWorkout?.paceSec
                         ? formatPace(r.latestWorkout.paceSec)
                         : "—"}
-                    </Td>
-                    <Td className="max-w-[180px] truncate text-gray-500">
-                      {r.latestWorkout?.notes ?? "—"}
-                    </Td>
-                    <Td className="text-right font-semibold text-ink">
-                      {formatMiles(r.thisWeekMiles)}
-                    </Td>
-                    <Td className="text-right text-gray-500">
-                      {formatMiles(r.lastWeekMiles)}
-                    </Td>
-                    <Td className="text-right">
-                      {r.change != null ? (
-                        <span
-                          className={
-                            r.change >= 30
-                              ? "font-semibold text-warning"
-                              : r.change >= 0
-                                ? "text-success"
-                                : "text-gray-500"
-                          }
-                        >
-                          {formatPercent(r.change)}
-                        </span>
-                      ) : (
-                        <span className="text-gray-300">—</span>
-                      )}
                     </Td>
                     <Td>
                       <FeelingChip
