@@ -43,36 +43,10 @@ export function ParentAccessSection({
     {} as ParentActionState,
   );
 
-  return (
-    <div className="space-y-4">
-      <Card className="p-4">
-        <form action={formAction} className="space-y-3">
-          <div>
-            <Label htmlFor={`parent-email-${athleteId}`}>Parent / guardian email</Label>
-            <Input
-              id={`parent-email-${athleteId}`}
-              name="email"
-              type="email"
-              placeholder="parent@example.com"
-              required
-            />
-          </div>
-          {state.error ? (
-            <div className="flex items-center gap-2 rounded-xl bg-red-50 px-3 py-2 text-sm font-medium text-injury">
-              <AlertCircle className="h-4 w-4 shrink-0" />
-              {state.error}
-            </div>
-          ) : null}
-          {state.ok ? (
-            <div className="flex items-center gap-2 rounded-xl bg-green-50 px-3 py-2 text-sm font-medium text-success">
-              <Check className="h-4 w-4 shrink-0" />
-              {state.message ?? "Invite sent."}
-            </div>
-          ) : null}
-          <InviteSubmitButton />
-        </form>
-      </Card>
+  const hasParents = data.links.length > 0 || data.pendingInvites.length > 0;
 
+  return (
+    <Card className="space-y-4 p-4">
       {data.links.length > 0 ? (
         <div>
           <h3 className="mb-2 text-sm font-bold text-ink">Linked parents</h3>
@@ -138,13 +112,41 @@ export function ParentAccessSection({
         </div>
       ) : null}
 
-      {data.links.length === 0 && data.pendingInvites.length === 0 ? (
-        <p className="text-sm text-gray-500">
-          No parents linked yet. Send an invite to give a parent read-only access to
-          this training log and team schedule.
-        </p>
-      ) : null}
-    </div>
+      <form
+        action={formAction}
+        className={hasParents ? "space-y-3 border-t border-line pt-4" : "space-y-3"}
+      >
+        {!hasParents ? (
+          <p className="text-sm text-gray-500">
+            No parents linked yet. Send an invite to give a parent read-only access to
+            this training log and team schedule.
+          </p>
+        ) : null}
+        <div>
+          <Label htmlFor={`parent-email-${athleteId}`}>Parent / guardian email</Label>
+          <Input
+            id={`parent-email-${athleteId}`}
+            name="email"
+            type="email"
+            placeholder="parent@example.com"
+            required
+          />
+        </div>
+        {state.error ? (
+          <div className="flex items-center gap-2 rounded-xl bg-red-50 px-3 py-2 text-sm font-medium text-injury">
+            <AlertCircle className="h-4 w-4 shrink-0" />
+            {state.error}
+          </div>
+        ) : null}
+        {state.ok ? (
+          <div className="flex items-center gap-2 rounded-xl bg-green-50 px-3 py-2 text-sm font-medium text-success">
+            <Check className="h-4 w-4 shrink-0" />
+            {state.message ?? "Invite sent."}
+          </div>
+        ) : null}
+        <InviteSubmitButton />
+      </form>
+    </Card>
   );
 }
 

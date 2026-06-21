@@ -151,6 +151,13 @@ export default async function AthleteProfilePage({
           </div>
 
           <div>
+            <SectionTitle title="Private coach notes" />
+            <Card className="p-4">
+              <CoachNotes athleteId={athlete.id} notes={data.notes} />
+            </Card>
+          </div>
+
+          <div>
             <SectionTitle title="Injury & pain history" />
             {data.painHistory.length > 0 ? (
               <div className="divide-y divide-line overflow-hidden rounded-2xl border border-line bg-white">
@@ -188,18 +195,6 @@ export default async function AthleteProfilePage({
 
         <div className="space-y-6">
           <div>
-            <SectionTitle title="Parent / guardian access" />
-            <ParentAccessSection athleteId={athlete.id} data={parentAccess} canRevoke />
-          </div>
-
-          <div>
-            <SectionTitle title="Private coach notes" />
-            <Card className="p-4">
-              <CoachNotes athleteId={athlete.id} notes={data.notes} />
-            </Card>
-          </div>
-
-          <div>
             <SectionTitle title="Shoes" />
             {data.shoes.length > 0 ? (
               <div className="space-y-3">
@@ -212,6 +207,11 @@ export default async function AthleteProfilePage({
                 <p className="text-sm text-gray-400">No shoes tracked.</p>
               </Card>
             )}
+          </div>
+
+          <div>
+            <SectionTitle title="Parent / guardian access" />
+            <ParentAccessSection athleteId={athlete.id} data={parentAccess} canRevoke />
           </div>
         </div>
       </div>
