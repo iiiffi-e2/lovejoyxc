@@ -3,9 +3,17 @@ import { getCurrentUser, roleHome } from "@/lib/auth";
 import { SignupForm } from "./signup-form";
 import { Logo } from "@/components/logo";
 
-export default async function SignupPage() {
+export default async function SignupPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
+}) {
   const user = await getCurrentUser();
   if (user) redirect(roleHome(user.role));
+
+  const params = await searchParams;
+  const rawCode = params.code ?? params.inviteCode;
+  const inviteCode = Array.isArray(rawCode) ? rawCode[0] : rawCode;
 
   return (
     <main className="flex min-h-dvh flex-col items-center justify-center bg-surface px-5 py-10">
@@ -21,7 +29,7 @@ export default async function SignupPage() {
         </div>
 
         <div className="rounded-2xl border border-line bg-white p-6 shadow-sm">
-          <SignupForm />
+          <SignupForm defaultInviteCode={inviteCode} />
         </div>
 
         <p className="mt-4 text-center text-sm text-gray-500">

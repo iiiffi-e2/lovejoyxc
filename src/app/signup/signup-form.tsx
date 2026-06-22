@@ -9,7 +9,11 @@ import { Input, Label, Select } from "@/components/ui/field";
 
 const initial: SignupState = {};
 
-export function SignupForm() {
+export function SignupForm({
+  defaultInviteCode,
+}: {
+  defaultInviteCode?: string;
+}) {
   const [state, formAction] = useActionState(signupAction, initial);
 
   return (
@@ -22,6 +26,7 @@ export function SignupForm() {
           type="text"
           autoComplete="off"
           placeholder="LJXC-XXXXXX"
+          defaultValue={defaultInviteCode}
           required
         />
       </div>
