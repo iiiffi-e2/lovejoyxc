@@ -20,7 +20,7 @@ import { MileageBarChart } from "@/components/charts/mileage-bar-chart";
 import { Table, TableWrap, Td, Th, Tr } from "@/components/ui/table";
 import { FeelingChip, WorkoutTypeBadge } from "@/components/domain-badges";
 import { EmptyState } from "@/components/empty-state";
-import { formatDuration, formatMiles, formatPace, relativeDays } from "@/lib/format";
+import { formatDuration, formatMiles, formatPace } from "@/lib/format";
 import { RUNNING_TYPES, scoreToFeeling } from "@/lib/labels";
 
 export default async function CoachDashboard() {
@@ -47,7 +47,7 @@ export default async function CoachDashboard() {
               <thead>
                 <Tr className="border-t-0">
                   <Th>Athlete</Th>
-                  <Th>Last logged</Th>
+                  <Th className="text-right">This wk</Th>
                   <Th>Type</Th>
                   <Th className="text-right">Dist</Th>
                   <Th className="text-right">Pace</Th>
@@ -67,7 +67,9 @@ export default async function CoachDashboard() {
                         {r.athlete.name}
                       </Link>
                     </Td>
-                    <Td className="text-gray-500">{relativeDays(r.lastLogged)}</Td>
+                    <Td className="text-right font-semibold text-ink">
+                      {formatMiles(r.thisWeekMiles)}
+                    </Td>
                     <Td>
                       {r.latestWorkout ? (
                         <WorkoutTypeBadge type={r.latestWorkout.workoutType} />
